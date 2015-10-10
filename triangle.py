@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-import triangulate
+from triangle import triangulate
 import node
 import sys
 
