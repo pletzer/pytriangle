@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-from triangle import triangulate
+import triangulate
 import node
 import sys
 
@@ -145,11 +145,8 @@ class Triangle:
         to retrieve previous triangulation refinements: level=-1
         will retrive the last, level=-2 the previous one, etc.
         """
+        return triangulate.get_nodes(self.hndls[level])
 
-        grid = node.node()
-        data = triangulate.get_nodes(self.hndls[level])
-        grid.setData(data)
-        return grid
 
     def get_edges(self, level=-1):
 
@@ -178,60 +175,6 @@ class Triangle:
         can be used to retrieve previous triangulation refinements.
         """
         return triangulate.get_attributes(self.hndls[-1])
-        
-
-
-###############################################################################
-
-def main():
-
-    import math
-
-    nto = 32
-    nti = 16
-    dto = 2*math.pi/float(nto)
-    dti = 2*math.pi/float(nti)
-    
-    ptso = [(math.cos(i*dto), math.sin(i*dto)) for i in range(nto)]
-    mrko = [1 for i in range(nto)]
-
-    ptsi = [(0.5+0.1*math.cos(i*dti), 0.1*math.sin(i*dti)) for i in range(nti)]
-    mrki = [0 for i in range(nti)]
-
-    pts = ptso + ptsi
-    
-    sgo = [(i,i+1) for i in range(nto-1)] + [(nto-1,0)]
-    sgi = [(i,i+1) for i in range(nto, nto+nti-1)] + [(nto+nti-1,nto)]
-
-    seg = sgo + sgi
-    att = [ (p[0], p[1], p[0]**2,) for p in pts]
-    mrk = mrko + mrki
-    hls = [(0.5,0.)]
-
-    t = Triangle()
-    t.set_points(pts, mrk)
-    t.set_segments(seg)
-    t.set_holes(hls)
-    #print att
-    t.set_attributes(att)
-
-    t.triangulate(area=0.01)
-    for i in range(10):
-        t.refine(1.2)
-    grid = t.get_nodes(level=-1)
-    grid.plot()
-    
-    # check attribute interpolation
-    pts = t.get_nodes()
-    att = t.get_attributes()
-    error = 0.
-    for i in range(len(pts)):
-        x, y = pts[i][0]
-        error += (att[i][0]-x)**2 + (att[i][1]-y)**2 #+ (att[i][2]-x**2)**2
-    error = math.sqrt(error/float(len(pts)))
-    print('error = %g' % error)                  
-
-if __name__ == '__main__': main()
         
 
         

@@ -18,20 +18,19 @@ if not hasattr(sys, 'version_info') or sys.version_info < (2,7,0,'',0):
 
 from distutils.core import setup, Extension
 
-setup (name = "triangle",
+setup (name = "pytriangle",
        version = "1.0",
        description='A 2D triangulation program originally written by Jonathan Richard Shewchuck',
        url="http://github.com/pletzer/pytriangle",
-       package_dir = {'triangle': ''},
-       packages = ['triangle',],
+       py_modules = ["triangle",],
        author="Alexander Pletzer",
        author_email="alexander@gokliya.net",
-       ext_modules = [Extension("triangle.triangulate", # name of the shared library
+       ext_modules = [Extension("triangulate", # name of the shared library
                                           ["code/triangle.c",
                                            "code/trianglemodule.c"],
                                 define_macros=[("TRILIBRARY",1),
                                                ("NO_TIMER",1)],
-                                include_dirs=['code',],
+                                include_dirs=["code",],
                                 ),
                       
                       ]
