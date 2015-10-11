@@ -85,7 +85,7 @@ class Triangle:
         triangulate.set_attributes(self.hndls[0], att)
         self.has_atts = True
         
-    def triangulate(self, area=None, mode='pzq27e'):
+    def triangulate(self, area=None, mode='pzq27eQ'):
 
         """
         Perform an initial triangulation. Invoke this after setting
