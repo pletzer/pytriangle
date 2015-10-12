@@ -105,6 +105,7 @@ class Triangle:
         # q<angle>: quality mesh
         # e: edge
         # p: planar straight line graph
+        # Q: quiet mode
 
         self.mode = mode
         if area:
@@ -141,7 +142,8 @@ class Triangle:
     def get_nodes(self, level=-1):
 
         """
-        Will return an node object. Here, level can be used
+        Will return list [ [(x, y), marker], ...] where marker is 1
+        on the boundary and 0 inside. Here, level can be used
         to retrieve previous triangulation refinements: level=-1
         will retrive the last, level=-2 the previous one, etc.
         """
@@ -151,7 +153,7 @@ class Triangle:
     def get_edges(self, level=-1):
 
         """
-        Return list of edges [((i1,i2),m),..)
+        Return list of edges [((i1, i2), m),..)
         (i1,i2): node indices
         m: boundary marker (0=interior, 1=boundary)
         """

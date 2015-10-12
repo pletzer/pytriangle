@@ -365,12 +365,11 @@ triangulate_TRIANGULATE(PyObject *self, PyObject *args){
 static PyObject *
 triangulate_GET_NODES(PyObject *self, PyObject *args){
 
-  /* Return a dict { i: [(x,y),[i1,i2,i3..], marker],..} */
+  /* Return a [ [(x,y), marker],..] */
 
-  PyObject *address, *holder, *mlist, *ii, *kk, *ll, *mtemp, *contemp;
+  PyObject *address, *holder, *mlist;
   struct triangulateio *object;
   int i, m;
-  long k,l;
   REAL x, y;
   
   if(!PyArg_ParseTuple(args, "O", 
@@ -384,36 +383,16 @@ triangulate_GET_NODES(PyObject *self, PyObject *args){
   }
   object = PyCObject_AsVoidPtr(address);
 
-  holder = PyDict_New();
+  holder = PyList_New(object->numberofpoints);
 
-  for(i = 0; i < object->numberofpoints; ++i){
+  for (i = 0; i < object->numberofpoints; ++i){
     x = object->pointlist[_NDIM*i  ];
-    y = object->pointlist[_NDIM*i+1];
+    y = object->pointlist[_NDIM*i + 1];
     m = object->pointmarkerlist[i];
-    mlist = Py_BuildValue("[(d,d),[],i]", x, y, m);
-    ii = PyInt_FromLong((long)i);
-    PyDict_SetItem(holder, ii, mlist);
-    Py_DECREF(ii);
-    Py_DECREF(mlist);
+    mlist = Py_BuildValue("[(d,d),i]", x, y, m);
+    PyList_SET_ITEM(holder, i, mlist);
   }
-
-  if(object->edgelist){
-    for(i = 0; i < object->numberofedges; ++i){
-      k  = object->edgelist[_NDIM*i  ]; 
-      l  = object->edgelist[_NDIM*i+1];
-      kk = PyInt_FromLong(k);
-      ll = PyInt_FromLong(l);
-      mtemp   = PyDict_GetItem(holder, kk);
-      contemp = PyList_GetItem(mtemp,1);
-      PyList_Append(contemp, ll);       
-      mtemp   = PyDict_GetItem(holder, ll);
-      contemp = PyList_GetItem(mtemp,1);
-      PyList_Append(contemp, kk); 
-      Py_DECREF(kk);
-      Py_DECREF(ll);
-    }
-  }
-     
+    
   return holder;  
 }
 
@@ -423,11 +402,11 @@ triangulate_GET_EDGES(PyObject *self, PyObject *args){
   struct triangulateio *object;
   int i, i1, i2, m;
   
-  if(!PyArg_ParseTuple(args, "O", 
+  if (!PyArg_ParseTuple(args, "O",
 		       &address)){ 
     return NULL;
   }
-  if(!PyCObject_Check(address)){
+  if (!PyCObject_Check(address)){
     PyErr_SetString(PyExc_TypeError,
 		    "Wrong argument! CObject required (triangulateio handle).");
     return NULL;
@@ -436,7 +415,7 @@ triangulate_GET_EDGES(PyObject *self, PyObject *args){
 
   holder = PyList_New(object->numberofedges);
 
-  for(i = 0; i < object->numberofedges; ++i){
+  for (i = 0; i < object->numberofedges; ++i){
     i1 = object->edgelist[2*i  ];
     i2 = object->edgelist[2*i+1];
     m  = object->edgemarkerlist[i];
