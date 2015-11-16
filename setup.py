@@ -8,6 +8,7 @@ python setup.py install --prefix=...
 python setup.py bdist --format=wininst
 python setup.py bdist --format=rpm
 python setup.py sdist --formats=gztar,zip
+python setup.py sdist upload -r pipy
 """
 
 import sys
@@ -19,7 +20,7 @@ if not hasattr(sys, 'version_info') or sys.version_info < (2,7,0,'',0):
 from distutils.core import setup, Extension
 
 setup (name = "pytriangle",
-       version = "1.0.1",
+       version = "1.0.3",
        description='A 2D triangulation program originally written by Jonathan Richard Shewchuck',
        url="http://github.com/pletzer/pytriangle",
        py_modules = ["triangle",],
@@ -27,7 +28,6 @@ setup (name = "pytriangle",
        author_email="alexander@gokliya.net",
        ext_modules = [Extension("triangulate", # name of the shared library
                                           ["code/triangle.c", 
-                                           "code/triangle.h",
                                            "code/trianglemodule.c"],
                                 define_macros=[("TRILIBRARY",1),
                                                ("NO_TIMER",1)],

@@ -1,7 +1,7 @@
 # pytriangle
 
 A python interface to the 2D triangulation program TRIANGLE written by 
-Jonathan Richard Shewchuck.
+Jonathan Richard Shewchuck [https://www.cs.cmu.edu/~quake/triangle.html]
 
 ### Usage ###
 

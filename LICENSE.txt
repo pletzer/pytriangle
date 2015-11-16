@@ -1,0 +1,7 @@
+ This interface to the TRIANGLE code is provided with the hope that
+ is will be useful. The code comes with no guarantee whatsover, use
+ at your own risk.
+ Bug reports and comments can be sent to alexander _at_ gokliya _dot_ net 
+
+ Please read conditions of use of the TRAINGLE code at 
+ https://www.cs.cmu.edu/~quake/triangle.html
