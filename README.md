@@ -80,8 +80,14 @@ Type
 python setup.py install
 ```
 
-Alternatively, you can also install with pip
+Alternatively, you can also install pytriangle with pip
 ```bash
 pip install pytriangle
+```
+
+### Support ###
+
+Send bug reports and comments to alexander _at_ gokliya _dot_ net
+
 ```
 
