@@ -23,7 +23,8 @@ markerBoundary = [1, 1, ...]
 pointInner = [(xn, yn), ...]
 markerInner = [0, ...]
 points = pointBoundary + pointInner
-t.setPoints(points)
+markers = markerBoundary + markerInner
+t.setPoints(points, markers=markers)
 ```
 
 Create boundary segments, order is counterclockwise. Optionally add internal 
@@ -51,4 +52,25 @@ Triangulate by specifying the maximum cell area, e.g.
 ```python
 t.triangulate(area=0.01)
 ```
+
+The triangulation can be refined with  
+```python
+t.refine(area_ratio=1.5)
+```
+
+The triangulation points can be obtained with
+```python
+nodes = t.get_nodes()
+```
+where nodes is in the format [[(x, y), marker], ...] where marker is 1 on the boundary 
+and zero inside.
+
+Triangle connectivity can be obtained with 
+```python
+triangles = t.get_triangles()
+```
+where triangles is in the format [[(i0, i1, i2), (k0, k1, k2), [a0, a1, ...]], ...],
+i0, i1, and i2 are the node indices, k0, k1, and k2 are the neighbor node indices, and 
+a0, a1, ... are the optional attributes interpolated to cell centers. 
+
 
