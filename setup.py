@@ -13,14 +13,14 @@ python setup.py sdist upload -r pipy
 
 import sys
 
-if not hasattr(sys, 'version_info') or sys.version_info < (2,7,0,'',0):
-    raise SystemExit("Python 2.7 or later required to build triangle!")
+if not hasattr(sys, 'version_info') or sys.version_info < (2,6,0,'',0):
+    raise SystemExit("Python 2.6 or later required to build triangle!")
 
 
 from distutils.core import setup, Extension
 
 setup (name = "pytriangle",
-       version = "1.0.3",
+       version = "1.0.4",
        description='A 2D triangulation program originally written by Jonathan Richard Shewchuck',
        url="http://github.com/pletzer/pytriangle",
        py_modules = ["triangle",],
