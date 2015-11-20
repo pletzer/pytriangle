@@ -81,6 +81,8 @@ class Triangle:
         """
         Optionally invoked to set node attributes att=[(a1,..), ...]
         """
+        if len(att) == 0:
+            return
         triangulate.set_attributes(self.hndls[0], att)
         self.has_atts = True
         
