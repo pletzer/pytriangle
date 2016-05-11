@@ -142,7 +142,7 @@ triangulate_SET_POINTS(PyObject *self, PyObject *args){
     object->pointlist[_NDIM*i  ] = PyFloat_AsDouble(PySequence_Fast_GET_ITEM(elem, 0));
     object->pointlist[_NDIM*i+1] = PyFloat_AsDouble(PySequence_Fast_GET_ITEM(elem, 1));
     elem = PySequence_Fast_GET_ITEM(mrks, i);
-    object->pointmarkerlist[i] = (int) PyInt_AsLong(elem);
+    object->pointmarkerlist[i] = (int) PyLong_AsLong(elem);
   }
   
   return Py_BuildValue("");
@@ -259,8 +259,8 @@ triangulate_SET_SEGMENTS(PyObject *self, PyObject *args){
   object->numberofsegments = ns;
   for(i = 0; i < ns; ++i){
     elem = PySequence_Fast_GET_ITEM(segs, i);
-    object->segmentlist[_NDIM*i  ] = (int) PyInt_AsLong(PySequence_Fast_GET_ITEM(elem,0));
-    object->segmentlist[_NDIM*i+1] = (int) PyInt_AsLong(PySequence_Fast_GET_ITEM(elem,1));
+    object->segmentlist[_NDIM*i  ] = (int) PyLong_AsLong(PySequence_Fast_GET_ITEM(elem,0));
+    object->segmentlist[_NDIM*i+1] = (int) PyLong_AsLong(PySequence_Fast_GET_ITEM(elem,1));
   }
 
   return Py_BuildValue("");
@@ -459,12 +459,12 @@ triangulate_GET_TRIANGLES(PyObject *self, PyObject *args){
     atts  = PyList_New(na);
     for(j = 0; j < nc; ++j){
       k = object->trianglelist[nc*i+j];
-      kk = PyInt_FromLong((long) k);
+      kk = PyLong_FromLong((long) k);
       PyList_SET_ITEM(nodes, j, kk);
     }
     for(j = 0; j < nt; ++j){
       m = object->neighborlist[nt*i+j];
-      mm = PyInt_FromLong((long)m);
+      mm = PyLong_FromLong((long)m);
       PyTuple_SET_ITEM(neigh, j, mm);
     }
     for(j = 0; j < na; ++j){
