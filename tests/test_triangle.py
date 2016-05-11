@@ -9,10 +9,10 @@ import triangle
 
 class TestTriangle(unittest.TestCase):
     def setUp(self):
-        print 'setup'
+        print('setup')
     
     def tearDown(self):
-        print 'tear'
+        print('tear')
     
     def test_bad(self):
     
