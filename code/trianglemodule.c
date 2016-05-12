@@ -60,7 +60,7 @@ void destroy_triangulateio(PyObject *address) {
 }
 
 static PyObject *
-triangulate_NEW(PyObject *self, PyObject *args){
+triangulate_NEW(PyObject *self, PyObject *args) {
   PyObject *address, *result;
   struct triangulateio *object;
 
@@ -104,26 +104,26 @@ triangulate_NEW(PyObject *self, PyObject *args){
 }
 
 static PyObject *
-triangulate_SET_POINTS(PyObject *self, PyObject *args){
+triangulate_SET_POINTS(PyObject *self, PyObject *args) {
   PyObject *address, *xy, *mrks, *elem;
   struct triangulateio *object;
   int npts, i;
 
   if(!PyArg_ParseTuple(args,(char *)"OOO", 
-		       &address, &xy, &mrks)){ 
+		       &address, &xy, &mrks)) { 
     return NULL;
   }
-  if(!PyCapsule_CheckExact(address)){
+  if(!PyCapsule_CheckExact(address)) {
     PyErr_SetString(PyExc_TypeError,
       "Wrong 1st argument! triangulateio handle required.");
     return NULL;
   }    
-  if(!PySequence_Check(xy)){
+  if(!PySequence_Check(xy)) {
     PyErr_SetString(PyExc_TypeError,
       "Wrong 2nd argument! Sequence required (xy).");
     return NULL;
   }
-  if(!PySequence_Check(mrks)){
+  if(!PySequence_Check(mrks)) {
     PyErr_SetString(PyExc_TypeError,
       "Wrong 3rd argument! Sequence required (mrks).");
     return NULL;
@@ -131,8 +131,8 @@ triangulate_SET_POINTS(PyObject *self, PyObject *args){
   object = PyCapsule_GetPointer(address, TRIANGULATEIO_NAME);  
 
   npts  = PySequence_Length(xy);
-  if(npts > 0){
-    if(npts != object->numberofpoints){
+  if(npts > 0) {
+    if(npts != object->numberofpoints) {
       if(object->pointlist) free(object->pointlist);
       /* if(object->pointattributelist) free(object->pointattributelist); */
       if(object->pointmarkerlist) free(object->pointmarkerlist);
@@ -142,7 +142,7 @@ triangulate_SET_POINTS(PyObject *self, PyObject *args){
     }
     object->numberofpoints = npts;
   }
-  for(i = 0; i < npts; ++i){
+  for(i = 0; i < npts; ++i) {
     elem = PySequence_Fast_GET_ITEM(xy, i);
     object->pointlist[_NDIM*i  ] = PyFloat_AsDouble(PySequence_Fast_GET_ITEM(elem, 0));
     object->pointlist[_NDIM*i+1] = PyFloat_AsDouble(PySequence_Fast_GET_ITEM(elem, 1));
@@ -154,21 +154,21 @@ triangulate_SET_POINTS(PyObject *self, PyObject *args){
 }
 
 static PyObject *
-triangulate_SET_ATTRIBUTES(PyObject *self, PyObject *args){
+triangulate_SET_ATTRIBUTES(PyObject *self, PyObject *args) {
   PyObject *address, *atts, *elem;
   struct triangulateio *object;
   int npts, natts, i, j;
 
   if(!PyArg_ParseTuple(args,(char *)"OO", 
-		       &address, &atts)){ 
+		       &address, &atts)) { 
     return NULL;
   }
-  if(!PyCapsule_CheckExact(address)){
+  if(!PyCapsule_CheckExact(address)) {
     PyErr_SetString(PyExc_TypeError,
       "Wrong 1st argument! triangulateio handle required.");
     return NULL;
   }    
-  if(!PySequence_Check(atts)){
+  if(!PySequence_Check(atts)) {
     PyErr_SetString(PyExc_TypeError,
       "Wrong 2nd argument! Sequence required (atts).");
     return NULL;
@@ -176,22 +176,22 @@ triangulate_SET_ATTRIBUTES(PyObject *self, PyObject *args){
   object = PyCapsule_GetPointer(address, TRIANGULATEIO_NAME);  
 
   npts  = PySequence_Length(atts);
-  if(npts != object->numberofpoints){
+  if(npts != object->numberofpoints) {
     PyErr_SetString(PyExc_RuntimeError, 
       "Wrong number of attribute elements.");
     return NULL;
   }
   /* assume number of atts to be the same for all nodes! */
-  if(npts > 0){
+  if(npts > 0) {
     natts = PySequence_Length( PySequence_Fast_GET_ITEM(atts, 0) );
-    if(natts != object->numberofpointattributes){
+    if(natts != object->numberofpointattributes) {
       if(object->pointattributelist) free(object->pointattributelist);
       object->pointattributelist = malloc(natts * npts * sizeof(REAL));
     }
     object->numberofpointattributes = natts;
-    for(i = 0; i < npts; ++i){
+    for(i = 0; i < npts; ++i) {
       elem = PySequence_Fast_GET_ITEM(atts, i);
-      for(j = 0; j < natts; ++j){
+      for(j = 0; j < natts; ++j) {
         object->pointattributelist[natts*i+j] = PyFloat_AsDouble(PySequence_Fast_GET_ITEM(elem, j));
       }
     }
@@ -201,16 +201,16 @@ triangulate_SET_ATTRIBUTES(PyObject *self, PyObject *args){
 }
 
 static PyObject *
-triangulate_GET_ATTRIBUTES(PyObject *self, PyObject *args){
+triangulate_GET_ATTRIBUTES(PyObject *self, PyObject *args) {
   PyObject *address, *elem, *val, *result;
   struct triangulateio *object;
   int npts, natts, i, j;
 
   if(!PyArg_ParseTuple(args,(char *)"O", 
-		       &address)){ 
+		       &address)) { 
     return NULL;
   }
-  if(!PyCapsule_CheckExact(address)){
+  if(!PyCapsule_CheckExact(address)) {
     PyErr_SetString(PyExc_TypeError,
       "Wrong 1st argument! triangulateio handle required.");
     return NULL;
@@ -220,9 +220,9 @@ triangulate_GET_ATTRIBUTES(PyObject *self, PyObject *args){
   result = PyList_New(object->numberofpoints);
   npts   = object->numberofpoints;
   natts  = object->numberofpointattributes;
-  for(i = 0; i < npts; ++i){
+  for(i = 0; i < npts; ++i) {
     elem = PyTuple_New(natts);
-    for(j = 0; j < natts; ++j){
+    for(j = 0; j < natts; ++j) {
       val = PyFloat_FromDouble(object->pointattributelist[natts*i+j]);
       PyTuple_SET_ITEM(elem, j, val);
       /* Py_DECREF(val); */
@@ -235,21 +235,21 @@ triangulate_GET_ATTRIBUTES(PyObject *self, PyObject *args){
 }
 
 static PyObject *
-triangulate_SET_SEGMENTS(PyObject *self, PyObject *args){
+triangulate_SET_SEGMENTS(PyObject *self, PyObject *args) {
   PyObject *address, *segs, *elem;
   struct triangulateio *object;
   int ns, i;
 
   if(!PyArg_ParseTuple(args,(char *)"OO", 
-		       &address, &segs)){ 
+		       &address, &segs)) { 
     return NULL;
   }
-  if(!PyCapsule_CheckExact(address)){
+  if(!PyCapsule_CheckExact(address)) {
     PyErr_SetString(PyExc_TypeError,
       "Wrong 1st argument! triangulateio handle required.");
     return NULL;
   }    
-  if(!PySequence_Check(segs)){
+  if(!PySequence_Check(segs)) {
     PyErr_SetString(PyExc_TypeError,
       "Wrong 2nd argument! Sequence required (segs).");
     return NULL;
@@ -257,12 +257,12 @@ triangulate_SET_SEGMENTS(PyObject *self, PyObject *args){
   object = PyCapsule_GetPointer(address, TRIANGULATEIO_NAME);  
 
   ns = PySequence_Length(segs);
-  if(ns != object->numberofsegments){
+  if(ns != object->numberofsegments) {
     if(object->segmentlist) free(object->segmentlist);
     object->segmentlist = malloc(_NDIM * object->numberofpoints * sizeof(int));
   }
   object->numberofsegments = ns;
-  for(i = 0; i < ns; ++i){
+  for(i = 0; i < ns; ++i) {
     elem = PySequence_Fast_GET_ITEM(segs, i);
     object->segmentlist[_NDIM*i  ] = (int) PyLong_AsLong(PySequence_Fast_GET_ITEM(elem,0));
     object->segmentlist[_NDIM*i+1] = (int) PyLong_AsLong(PySequence_Fast_GET_ITEM(elem,1));
@@ -272,21 +272,21 @@ triangulate_SET_SEGMENTS(PyObject *self, PyObject *args){
 }
 
 static PyObject *
-triangulate_SET_HOLES(PyObject *self, PyObject *args){
+triangulate_SET_HOLES(PyObject *self, PyObject *args) {
   PyObject *address, *xy, *elem;
   struct triangulateio *object;
   int nh, i;
 
   if(!PyArg_ParseTuple(args,(char *)"OO", 
-		       &address, &xy)){ 
+		       &address, &xy)) { 
     return NULL;
   }
-  if(!PyCapsule_CheckExact(address)){
+  if(!PyCapsule_CheckExact(address)) {
     PyErr_SetString(PyExc_TypeError,
       "Wrong 1st argument! triangulateio handle required.");
     return NULL;
   }    
-  if(!PySequence_Check(xy)){
+  if(!PySequence_Check(xy)) {
     PyErr_SetString(PyExc_TypeError,
       "Wrong 2nd argument! Sequence required (xy).");
     return NULL;
@@ -294,12 +294,12 @@ triangulate_SET_HOLES(PyObject *self, PyObject *args){
   object = PyCapsule_GetPointer(address, TRIANGULATEIO_NAME);
 
   nh = PySequence_Length(xy);
-  if(nh != object->numberofholes){
+  if(nh != object->numberofholes) {
     if(object->holelist) free(object->holelist);
     object->holelist = malloc(nh * _NDIM * sizeof(REAL));
   }
   object->numberofholes = nh;
-  for(i = 0; i < nh; ++i){
+  for(i = 0; i < nh; ++i) {
     elem = PySequence_Fast_GET_ITEM(xy, i);
     object->holelist[_NDIM*i  ] = PyFloat_AsDouble(PySequence_Fast_GET_ITEM(elem, 0));
     object->holelist[_NDIM*i+1] = PyFloat_AsDouble(PySequence_Fast_GET_ITEM(elem, 1));
@@ -309,32 +309,32 @@ triangulate_SET_HOLES(PyObject *self, PyObject *args){
 }
 
 static PyObject *
-triangulate_TRIANGULATE(PyObject *self, PyObject *args){
+triangulate_TRIANGULATE(PyObject *self, PyObject *args) {
   PyObject *address_in, *address_out, *address_vor, *switches;
   struct triangulateio *object_in, *object_out, *object_vor;
   char *swtch;
   int i;
 
   if(!PyArg_ParseTuple(args,(char *)"OOOO", 
-		       &switches, &address_in, &address_out, &address_vor)){ 
+		       &switches, &address_in, &address_out, &address_vor)) { 
     return NULL;
   }
-  if(!PyString_Check(switches)){
+  if(!PyString_Check(switches)) {
     PyErr_SetString(PyExc_TypeError,
       "Wrong 1st argument! String required.");
     return NULL;
   }    
-  if(!PyCapsule_CheckExact(address_in)){
+  if(!PyCapsule_CheckExact(address_in)) {
     PyErr_SetString(PyExc_TypeError,
       "Wrong 2nd argument! input triangulateio handle required.");
     return NULL;
   }    
-  if(!PyCapsule_CheckExact(address_out)){
+  if(!PyCapsule_CheckExact(address_out)) {
     PyErr_SetString(PyExc_TypeError,
       "Wrong 3rd argument! output triangulateio handle required.");
     return NULL;
   }    
-  if(!PyCapsule_CheckExact(address_vor)){
+  if(!PyCapsule_CheckExact(address_vor)) {
     PyErr_SetString(PyExc_TypeError,
       "Wrong 4th argument! voronoi triangulateio handle required.");
     return NULL;
@@ -352,14 +352,14 @@ triangulate_TRIANGULATE(PyObject *self, PyObject *args){
 
   object_out->holelist = NULL;
   object_out->holelist = malloc(_NDIM * object_in->numberofholes * sizeof(REAL));
-  for(i = 0; i < 2*object_in->numberofholes; ++i){
+  for(i = 0; i < 2*object_in->numberofholes; ++i) {
     object_out->holelist[i] = object_in->holelist[i];
   }
   object_out->regionlist = NULL;
-  if(object_in->numberofregions > 0){
+  if(object_in->numberofregions > 0) {
     /* x, y, region_attribute, max_area, four_area_constraints */
     object_out->regionlist = malloc((_NDIM+2+4) * object_in->numberofregions * sizeof(REAL));
-    for(i = 0; i < (_NDIM+2+4)*object_in->numberofregions; ++i){
+    for(i = 0; i < (_NDIM+2+4)*object_in->numberofregions; ++i) {
       object_out->regionlist[i] = object_in->regionlist[i];
     }
   }
@@ -368,7 +368,7 @@ triangulate_TRIANGULATE(PyObject *self, PyObject *args){
 }
 
 static PyObject *
-triangulate_GET_NODES(PyObject *self, PyObject *args){
+triangulate_GET_NODES(PyObject *self, PyObject *args) {
 
   /* Return a [ [(x,y), marker],..] */
 
@@ -378,10 +378,10 @@ triangulate_GET_NODES(PyObject *self, PyObject *args){
   REAL x, y;
   
   if(!PyArg_ParseTuple(args, "O", 
-		       &address)){ 
+		       &address)) { 
     return NULL;
   }
-  if(!PyCapsule_CheckExact(address)){
+  if(!PyCapsule_CheckExact(address)) {
     PyErr_SetString(PyExc_TypeError,
 		    "Wrong argument! triangulateio handle required.");
     return NULL;
@@ -390,7 +390,7 @@ triangulate_GET_NODES(PyObject *self, PyObject *args){
 
   holder = PyList_New(object->numberofpoints);
 
-  for (i = 0; i < object->numberofpoints; ++i){
+  for (i = 0; i < object->numberofpoints; ++i) {
     x = object->pointlist[_NDIM*i  ];
     y = object->pointlist[_NDIM*i + 1];
     m = object->pointmarkerlist[i];
@@ -402,16 +402,16 @@ triangulate_GET_NODES(PyObject *self, PyObject *args){
 }
 
 static PyObject *
-triangulate_GET_EDGES(PyObject *self, PyObject *args){
+triangulate_GET_EDGES(PyObject *self, PyObject *args) {
   PyObject *address, *holder, *i1_i2_m;
   struct triangulateio *object;
   int i, i1, i2, m;
   
   if (!PyArg_ParseTuple(args, "O",
-		       &address)){ 
+		       &address)) { 
     return NULL;
   }
-  if (!PyCapsule_CheckExact(address)){
+  if (!PyCapsule_CheckExact(address)) {
     PyErr_SetString(PyExc_TypeError,
 		    "Wrong argument! triangulateio handle required.");
     return NULL;
@@ -420,7 +420,7 @@ triangulate_GET_EDGES(PyObject *self, PyObject *args){
 
   holder = PyList_New(object->numberofedges);
 
-  for (i = 0; i < object->numberofedges; ++i){
+  for (i = 0; i < object->numberofedges; ++i) {
     i1 = object->edgelist[2*i  ];
     i2 = object->edgelist[2*i+1];
     m  = object->edgemarkerlist[i];
@@ -432,17 +432,17 @@ triangulate_GET_EDGES(PyObject *self, PyObject *args){
 }
 
 static PyObject *
-triangulate_GET_TRIANGLES(PyObject *self, PyObject *args){
+triangulate_GET_TRIANGLES(PyObject *self, PyObject *args) {
   PyObject *address, *holder, *nodes, *kk, *atts, *aa, *elem, *neigh, *mm;
   struct triangulateio *object;
   int i, j, k, m, nc, na, nt;
   REAL a;
   
   if(!PyArg_ParseTuple(args, "O", 
-		       &address)){ 
+		       &address)) { 
     return NULL;
   }
-  if(!PyCapsule_CheckExact(address)){
+  if(!PyCapsule_CheckExact(address)) {
     PyErr_SetString(PyExc_TypeError,
 		    "Wrong argument! triangulateio handle required.");
     return NULL;
@@ -451,28 +451,28 @@ triangulate_GET_TRIANGLES(PyObject *self, PyObject *args){
 
   holder = PyList_New(object->numberoftriangles);
   nc = object->numberofcorners;
-  if(object->neighborlist){
+  if(object->neighborlist) {
     nt = 3;
   } else{
     nt = 0;
   }
   na = object->numberoftriangleattributes;
 
-  for(i = 0; i < object->numberoftriangles; ++i){
+  for(i = 0; i < object->numberoftriangles; ++i) {
     nodes = PyList_New(nc);
     neigh = PyTuple_New(nt);
     atts  = PyList_New(na);
-    for(j = 0; j < nc; ++j){
+    for(j = 0; j < nc; ++j) {
       k = object->trianglelist[nc*i+j];
       kk = PyLong_FromLong((long) k);
       PyList_SET_ITEM(nodes, j, kk);
     }
-    for(j = 0; j < nt; ++j){
+    for(j = 0; j < nt; ++j) {
       m = object->neighborlist[nt*i+j];
       mm = PyLong_FromLong((long)m);
       PyTuple_SET_ITEM(neigh, j, mm);
     }
-    for(j = 0; j < na; ++j){
+    for(j = 0; j < na; ++j) {
       a = object->triangleattributelist[na*i+j];
       aa = PyFloat_FromDouble(a);
       PyList_SET_ITEM(atts, j, aa);
@@ -512,6 +512,57 @@ static PyMethodDef triangulate_methods[] = {
   {NULL, NULL, 0, NULL}
 };
 
-void inittriangulate(){
-Py_InitModule( "triangulate", triangulate_methods);
+struct triangulate_state {
+  PyObject *object;
+};
+
+#if PY_MAJOR_VERSION >= 3
+#define GETSTATE(m) ((struct module_state*)PyModule_GetState(m))
+#else
+#define GETSTATE(m) (&_state)
+static struct module_state _state;
+#endif
+
+#if PY_MAJOR_VERSION >= 3
+static struct PyModuleDef triangulateio_moduledef = {
+        PyModuleDef_HEAD_INIT,
+        "triangulate",
+        NULL,
+        sizeof(struct module_state),
+        triangulate_methods,
+        NULL,
+        NULL,
+        NULL,
+        NULL
+};
+
+#else
+void 
+inittriangulate() 
+#endif
+{
+
+//Py_InitModule( "triangulate", triangulate_methods);
+
+#if PY_MAJOR_VERSION >= 3
+    PyObject *module = PyModule_Create(&triangulateio_moduledef);
+#else
+    PyObject *module = Py_InitModule("triangulate", triangulate_methods);
+#endif
+
+/*
+    if (module == NULL)
+        INITERROR;
+    struct module_state *st = GETSTATE(module);
+
+    st->error = PyErr_NewException("myextension.Error", NULL, NULL);
+    if (st->error == NULL) {
+        Py_DECREF(module);
+        INITERROR;
+    }
+    */
+
+#if PY_MAJOR_VERSION >= 3
+    return module;
+#endif
 }
