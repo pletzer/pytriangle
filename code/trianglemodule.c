@@ -69,8 +69,8 @@ triangulate_NEW(PyObject *self, PyObject *args){
   object->pointlist             = NULL;
   object->pointattributelist    = NULL; /* In / out */
   object->pointmarkerlist       = NULL; /* In / out */
-  object->numberofpoints         = 0;    /* In / out */
-  object->numberofpointattributes= 0;    /* In / out */
+  object->numberofpoints         = 0;   /* In / out */
+  object->numberofpointattributes= 0;   /* In / out */
 
   object->trianglelist          = NULL; /* In / out */
   object->triangleattributelist = NULL; /* In / out */
@@ -115,7 +115,7 @@ triangulate_SET_POINTS(PyObject *self, PyObject *args){
   }
   if(!PyCapsule_CheckExact(address)){
     PyErr_SetString(PyExc_TypeError,
-      "Wrong 1st argument! CObject required (triangulateio handle).");
+      "Wrong 1st argument! triangulateio handle required.");
     return NULL;
   }    
   if(!PySequence_Check(xy)){
@@ -165,7 +165,7 @@ triangulate_SET_ATTRIBUTES(PyObject *self, PyObject *args){
   }
   if(!PyCapsule_CheckExact(address)){
     PyErr_SetString(PyExc_TypeError,
-      "Wrong 1st argument! CObject required (triangulateio handle).");
+      "Wrong 1st argument! triangulateio handle required.");
     return NULL;
   }    
   if(!PySequence_Check(atts)){
@@ -192,7 +192,7 @@ triangulate_SET_ATTRIBUTES(PyObject *self, PyObject *args){
     for(i = 0; i < npts; ++i){
       elem = PySequence_Fast_GET_ITEM(atts, i);
       for(j = 0; j < natts; ++j){
-	object->pointattributelist[natts*i+j] = PyFloat_AsDouble(PySequence_Fast_GET_ITEM(elem, j));
+        object->pointattributelist[natts*i+j] = PyFloat_AsDouble(PySequence_Fast_GET_ITEM(elem, j));
       }
     }
   }
@@ -212,7 +212,7 @@ triangulate_GET_ATTRIBUTES(PyObject *self, PyObject *args){
   }
   if(!PyCapsule_CheckExact(address)){
     PyErr_SetString(PyExc_TypeError,
-      "Wrong 1st argument! CObject required (triangulateio handle).");
+      "Wrong 1st argument! triangulateio handle required.");
     return NULL;
   }    
   object = PyCapsule_GetPointer(address, TRIANGULATEIO_NAME);
@@ -246,7 +246,7 @@ triangulate_SET_SEGMENTS(PyObject *self, PyObject *args){
   }
   if(!PyCapsule_CheckExact(address)){
     PyErr_SetString(PyExc_TypeError,
-      "Wrong 1st argument! CObject required (triangulateio handle).");
+      "Wrong 1st argument! triangulateio handle required.");
     return NULL;
   }    
   if(!PySequence_Check(segs)){
@@ -283,7 +283,7 @@ triangulate_SET_HOLES(PyObject *self, PyObject *args){
   }
   if(!PyCapsule_CheckExact(address)){
     PyErr_SetString(PyExc_TypeError,
-      "Wrong 1st argument! CObject required (triangulateio handle).");
+      "Wrong 1st argument! triangulateio handle required.");
     return NULL;
   }    
   if(!PySequence_Check(xy)){
@@ -326,17 +326,17 @@ triangulate_TRIANGULATE(PyObject *self, PyObject *args){
   }    
   if(!PyCapsule_CheckExact(address_in)){
     PyErr_SetString(PyExc_TypeError,
-      "Wrong 2nd argument! CObject required (triangulateio in handle).");
+      "Wrong 2nd argument! input triangulateio handle required.");
     return NULL;
   }    
   if(!PyCapsule_CheckExact(address_out)){
     PyErr_SetString(PyExc_TypeError,
-      "Wrong 3rd argument! CObject required (triangulateio out handle).");
+      "Wrong 3rd argument! output triangulateio handle required.");
     return NULL;
   }    
   if(!PyCapsule_CheckExact(address_vor)){
     PyErr_SetString(PyExc_TypeError,
-      "Wrong 4th argument! CObject required (triangulateio Voronoi handle).");
+      "Wrong 4th argument! voronoi triangulateio handle required.");
     return NULL;
   }    
   object_in  = PyCapsule_GetPointer(address_in,  TRIANGULATEIO_NAME);
@@ -383,7 +383,7 @@ triangulate_GET_NODES(PyObject *self, PyObject *args){
   }
   if(!PyCapsule_CheckExact(address)){
     PyErr_SetString(PyExc_TypeError,
-		    "Wrong argument! CObject required (triangulateio handle).");
+		    "Wrong argument! triangulateio handle required.");
     return NULL;
   }
   object = PyCapsule_GetPointer(address, TRIANGULATEIO_NAME);
@@ -413,7 +413,7 @@ triangulate_GET_EDGES(PyObject *self, PyObject *args){
   }
   if (!PyCapsule_CheckExact(address)){
     PyErr_SetString(PyExc_TypeError,
-		    "Wrong argument! CObject required (triangulateio handle).");
+		    "Wrong argument! triangulateio handle required.");
     return NULL;
   }
   object = PyCapsule_GetPointer(address, TRIANGULATEIO_NAME);
@@ -444,7 +444,7 @@ triangulate_GET_TRIANGLES(PyObject *self, PyObject *args){
   }
   if(!PyCapsule_CheckExact(address)){
     PyErr_SetString(PyExc_TypeError,
-		    "Wrong argument! CObject required (triangulateio handle).");
+		    "Wrong argument! triangulateio handle required.");
     return NULL;
   }
   object = PyCapsule_GetPointer(address, TRIANGULATEIO_NAME);
