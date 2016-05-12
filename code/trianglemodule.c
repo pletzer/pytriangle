@@ -144,8 +144,8 @@ triangulate_SET_POINTS(PyObject *self, PyObject *args) {
   }
   for(i = 0; i < npts; ++i) {
     elem = PySequence_Fast_GET_ITEM(xy, i);
-    object->pointlist[_NDIM*i  ] = PyFloat_AsDouble(PySequence_Fast_GET_ITEM(elem, 0));
-    object->pointlist[_NDIM*i+1] = PyFloat_AsDouble(PySequence_Fast_GET_ITEM(elem, 1));
+    object->pointlist[_NDIM*i    ] = PyFloat_AsDouble(PySequence_Fast_GET_ITEM(elem, 0));
+    object->pointlist[_NDIM*i + 1] = PyFloat_AsDouble(PySequence_Fast_GET_ITEM(elem, 1));
     elem = PySequence_Fast_GET_ITEM(mrks, i);
     object->pointmarkerlist[i] = (int) PyLong_AsLong(elem);
   }
@@ -319,7 +319,7 @@ triangulate_TRIANGULATE(PyObject *self, PyObject *args) {
 		       &switches, &address_in, &address_out, &address_vor)) { 
     return NULL;
   }
-  if(!PyString_Check(switches)) {
+  if(!PyUnicode_Check(switches)) {
     PyErr_SetString(PyExc_TypeError,
       "Wrong 1st argument! String required.");
     return NULL;
@@ -343,7 +343,7 @@ triangulate_TRIANGULATE(PyObject *self, PyObject *args) {
   object_out = PyCapsule_GetPointer(address_out, TRIANGULATEIO_NAME);
   object_vor = PyCapsule_GetPointer(address_vor, TRIANGULATEIO_NAME);
 
-  swtch = PyString_AS_STRING(switches);
+  swtch = PyBytes_AS_STRING(switches);
   triangulate(swtch, object_in, object_out, object_vor);
 
   /* Copy holelist and regionlist. These are input only with the pointer
@@ -487,8 +487,6 @@ triangulate_GET_TRIANGLES(PyObject *self, PyObject *args) {
   return holder;  
 }
 
-
-
 static PyMethodDef triangulate_methods[] = {
   {"new", triangulate_NEW, METH_VARARGS, "Return new handle to triangulateio structure ()->h."},
   {"set_points", triangulate_SET_POINTS, METH_VARARGS, 
@@ -517,10 +515,10 @@ struct triangulate_state {
 };
 
 #if PY_MAJOR_VERSION >= 3
-#define GETSTATE(m) ((struct module_state*)PyModule_GetState(m))
+#define GETSTATE(m) ((struct triagulate_state*)PyModule_GetState(m))
 #else
 #define GETSTATE(m) (&_state)
-static struct module_state _state;
+static struct triangulate_state _state;
 #endif
 
 #if PY_MAJOR_VERSION >= 3
@@ -528,7 +526,7 @@ static struct PyModuleDef triangulateio_moduledef = {
         PyModuleDef_HEAD_INIT,
         "triangulate",
         NULL,
-        sizeof(struct module_state),
+        sizeof(struct triangulate_state),
         triangulate_methods,
         NULL,
         NULL,
@@ -536,6 +534,8 @@ static struct PyModuleDef triangulateio_moduledef = {
         NULL
 };
 
+PyMODINIT_FUNC
+PyInit_triangulate(void)
 #else
 void 
 inittriangulate() 
@@ -553,7 +553,7 @@ inittriangulate()
 /*
     if (module == NULL)
         INITERROR;
-    struct module_state *st = GETSTATE(module);
+    struct triangulate_state *st = GETSTATE(module);
 
     st->error = PyErr_NewException("myextension.Error", NULL, NULL);
     if (st->error == NULL) {
