@@ -515,13 +515,6 @@ struct triangulate_state {
 };
 
 #if PY_MAJOR_VERSION >= 3
-#define GETSTATE(m) ((struct triagulate_state*)PyModule_GetState(m))
-#else
-#define GETSTATE(m) (&_state)
-static struct triangulate_state _state;
-#endif
-
-#if PY_MAJOR_VERSION >= 3
 static struct PyModuleDef triangulateio_moduledef = {
         PyModuleDef_HEAD_INIT,
         "triangulate",
@@ -547,20 +540,8 @@ inittriangulate()
 #if PY_MAJOR_VERSION >= 3
     PyObject *module = PyModule_Create(&triangulateio_moduledef);
 #else
-    PyObject *module = Py_InitModule("triangulate", triangulate_methods);
+    Py_InitModule("triangulate", triangulate_methods);
 #endif
-
-/*
-    if (module == NULL)
-        INITERROR;
-    struct triangulate_state *st = GETSTATE(module);
-
-    st->error = PyErr_NewException("myextension.Error", NULL, NULL);
-    if (st->error == NULL) {
-        Py_DECREF(module);
-        INITERROR;
-    }
-    */
 
 #if PY_MAJOR_VERSION >= 3
     return module;
