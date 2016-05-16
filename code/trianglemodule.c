@@ -310,7 +310,7 @@ triangulate_SET_HOLES(PyObject *self, PyObject *args) {
 
 static PyObject *
 triangulate_TRIANGULATE(PyObject *self, PyObject *args) {
-  PyObject *address_in, *address_out, *address_vor, *switches;
+  PyObject *switches, *address_in, *address_out, *address_vor;
   struct triangulateio *object_in, *object_out, *object_vor;
   char *swtch;
   int i;
@@ -319,7 +319,7 @@ triangulate_TRIANGULATE(PyObject *self, PyObject *args) {
 		       &switches, &address_in, &address_out, &address_vor)) { 
     return NULL;
   }
-  if(!PyUnicode_Check(switches)) {
+  if(!PyBytes_Check(switches)) {
     PyErr_SetString(PyExc_TypeError,
       "Wrong 1st argument! String required.");
     return NULL;
