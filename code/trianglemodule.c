@@ -310,20 +310,15 @@ triangulate_SET_HOLES(PyObject *self, PyObject *args) {
 
 static PyObject *
 triangulate_TRIANGULATE(PyObject *self, PyObject *args) {
-  PyObject *switches, *address_in, *address_out, *address_vor;
+  PyObject *address_in, *address_out, *address_vor;
   struct triangulateio *object_in, *object_out, *object_vor;
   char *swtch;
   int i;
 
-  if(!PyArg_ParseTuple(args,(char *)"OOOO", 
-		       &switches, &address_in, &address_out, &address_vor)) { 
+  if(!PyArg_ParseTuple(args,(char *)"sOOO",
+		       &swtch, &address_in, &address_out, &address_vor)) {
     return NULL;
   }
-  if(!PyBytes_Check(switches)) {
-    PyErr_SetString(PyExc_TypeError,
-      "Wrong 1st argument! String required.");
-    return NULL;
-  }    
   if(!PyCapsule_CheckExact(address_in)) {
     PyErr_SetString(PyExc_TypeError,
       "Wrong 2nd argument! input triangulateio handle required.");
@@ -343,7 +338,6 @@ triangulate_TRIANGULATE(PyObject *self, PyObject *args) {
   object_out = PyCapsule_GetPointer(address_out, TRIANGULATEIO_NAME);
   object_vor = PyCapsule_GetPointer(address_vor, TRIANGULATEIO_NAME);
 
-  swtch = PyBytes_AS_STRING(switches);
   triangulate(swtch, object_in, object_out, object_vor);
 
   /* Copy holelist and regionlist. These are input only with the pointer
