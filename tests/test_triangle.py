@@ -7,6 +7,7 @@ sys.path.insert(0, os.getcwd())
 
 import math
 import triangle
+import numpy
 
 class TestTriangle(unittest.TestCase):
     def setUp(self):
@@ -35,7 +36,7 @@ class TestTriangle(unittest.TestCase):
         t.triangulate(mode='pz', area=None)
 
     
-    def test_circle(self):
+    def test_circle_with_hole(self):
         
         # number of outer points
         nto = 32
@@ -55,6 +56,9 @@ class TestTriangle(unittest.TestCase):
                 for i in range(nti)]
         # set inner markers to zero
         mrki = [0 for i in range(nti)]
+
+        # add some points inside the domain
+        pts_inside = [(0., 0.), (0.1, 0.)]
         
         # outer segments, loop closes
         sgo = [(i, i + 1) for i in range(nto - 1)] + [(nto - 1, 0)]
@@ -62,7 +66,7 @@ class TestTriangle(unittest.TestCase):
         sgi = [(i, i + 1) for i in range(nto, nto + nti - 1)] + [(nto + nti - 1, nto)]
         
         # set all points
-        pts = ptso + ptsi
+        pts = ptso + ptsi + pts_inside
         # all segments
         seg = sgo + sgi
         # set all markers
@@ -98,9 +102,9 @@ class TestTriangle(unittest.TestCase):
             error += (attributes[i][0] - x)**2 + (attributes[i][1] - y)**2
         error = math.sqrt(error/float(len(pts)))
         print('error = %g' % error)
+        assert(abs(error) < 1.e-10)
 
-
-        
+  
 
 if __name__ == '__main__':
     unittest.main()
