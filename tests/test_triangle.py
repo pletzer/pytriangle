@@ -57,9 +57,9 @@ class TestTriangle(unittest.TestCase):
         mrki = [0 for i in range(nti)]
         
         # outer segments, loop closes
-        sgo = [(i, i+ 1) for i in range(nto - 1)] + [(nto-1,0)]
+        sgo = [(i, i + 1) for i in range(nto - 1)] + [(nto - 1, 0)]
         # inner segments, loop closes
-        sgi = [(i, i+ 1) for i in range(nto, nto + nti - 1)] + [(nto + nti - 1, nto)]
+        sgi = [(i, i + 1) for i in range(nto, nto + nti - 1)] + [(nto + nti - 1, nto)]
         
         # set all points
         pts = ptso + ptsi
@@ -95,9 +95,11 @@ class TestTriangle(unittest.TestCase):
         error = 0.
         for i in range(len(nodes)):
             x, y = nodes[i][0]
-            error += (attributes[i][0]-x)**2 + (attributes[i][1]-y)**2
+            error += (attributes[i][0] - x)**2 + (attributes[i][1] - y)**2
         error = math.sqrt(error/float(len(pts)))
         print('error = %g' % error)
+
+
         
 
 if __name__ == '__main__':
