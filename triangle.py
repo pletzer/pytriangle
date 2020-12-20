@@ -146,7 +146,7 @@ class Triangle:
         Will return list [ [(x, y), marker], ...] where marker is 1
         on the boundary and 0 inside. Here, level can be used
         to retrieve previous triangulation refinements: level=-1
-        will retrive the last, level=-2 the previous one, etc.
+        will retrieve the last, level=-2 the previous one, etc.
         """
         return triangulate.get_nodes(self.hndls[level])
 
