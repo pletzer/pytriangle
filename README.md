@@ -69,7 +69,7 @@ triangles = t.get_triangles()
 ```
 where nodes is in the format [[(x, y), marker], ...] where marker is 1 on the boundary 
 and zero inside and triangles is in the format [[(i0, i1, i2), (k0, k1, k2), [a0, a1, ...]], ...],
-i0, i1, and i2 are the node indices, k0, k1, and k2 are the neighbor node indices, and 
+i0, i1, and i2 are the node indices, k0, k1, and k2 are optional intermediate node indices, and 
 a0, a1, ... are the optional attributes interpolated to cell centers. 
 
 ### Installation ###

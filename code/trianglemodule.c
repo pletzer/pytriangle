@@ -1,9 +1,5 @@
 /*
-
-$Id: triangulatemodule.c,v 1.7 2005/11/09 15:18:59 pletzer Exp $
-
 Python interface module to double version of Triangle
-
 */
 
 #include <stdlib.h>
@@ -56,7 +52,6 @@ void destroy_triangulateio(PyObject *address) {
   if( object->normlist              ) free( object->normlist              );
 
   free(object);
-
 }
 
 static PyObject *
@@ -110,7 +105,7 @@ triangulate_SET_POINTS(PyObject *self, PyObject *args) {
   int npts, i;
 
   if(!PyArg_ParseTuple(args,(char *)"OOO", 
-		       &address, &xy, &mrks)) { 
+               &address, &xy, &mrks)) { 
     return NULL;
   }
   if(!PyCapsule_CheckExact(address)) {
@@ -160,7 +155,7 @@ triangulate_SET_ATTRIBUTES(PyObject *self, PyObject *args) {
   int npts, natts, i, j;
 
   if(!PyArg_ParseTuple(args,(char *)"OO", 
-		       &address, &atts)) { 
+               &address, &atts)) { 
     return NULL;
   }
   if(!PyCapsule_CheckExact(address)) {
@@ -207,7 +202,7 @@ triangulate_GET_ATTRIBUTES(PyObject *self, PyObject *args) {
   int npts, natts, i, j;
 
   if(!PyArg_ParseTuple(args,(char *)"O", 
-		       &address)) { 
+               &address)) { 
     return NULL;
   }
   if(!PyCapsule_CheckExact(address)) {
@@ -241,7 +236,7 @@ triangulate_SET_SEGMENTS(PyObject *self, PyObject *args) {
   int ns, i;
 
   if(!PyArg_ParseTuple(args,(char *)"OO", 
-		       &address, &segs)) { 
+               &address, &segs)) { 
     return NULL;
   }
   if(!PyCapsule_CheckExact(address)) {
@@ -278,7 +273,7 @@ triangulate_SET_HOLES(PyObject *self, PyObject *args) {
   int nh, i;
 
   if(!PyArg_ParseTuple(args,(char *)"OO", 
-		       &address, &xy)) { 
+               &address, &xy)) { 
     return NULL;
   }
   if(!PyCapsule_CheckExact(address)) {
@@ -316,7 +311,7 @@ triangulate_TRIANGULATE(PyObject *self, PyObject *args) {
   int i;
 
   if(!PyArg_ParseTuple(args,(char *)"sOOO",
-		       &swtch, &address_in, &address_out, &address_vor)) {
+               &swtch, &address_in, &address_out, &address_vor)) {
     return NULL;
   }
   if(!PyCapsule_CheckExact(address_in)) {
@@ -362,6 +357,48 @@ triangulate_TRIANGULATE(PyObject *self, PyObject *args) {
 }
 
 static PyObject *
+triangulate_GET_NUM_NODES(PyObject *self, PyObject *args) {
+  PyObject *address;
+  struct triangulateio *object;
+  int n;
+  
+  if(!PyArg_ParseTuple(args, "O", 
+               &address)) { 
+    return NULL;
+  }
+  if(!PyCapsule_CheckExact(address)) {
+    PyErr_SetString(PyExc_TypeError,
+            "Wrong argument! triangulateio handle required.");
+    return NULL;
+  }
+  object = PyCapsule_GetPointer(address, TRIANGULATEIO_NAME);
+  n = object->numberofpoints;
+
+  return Py_BuildValue("i", n);
+}
+
+static PyObject *
+triangulate_GET_NUM_TRIANGLES(PyObject *self, PyObject *args) {
+  PyObject *address;
+  struct triangulateio *object;
+  int n;
+  
+  if(!PyArg_ParseTuple(args, "O", 
+               &address)) { 
+    return NULL;
+  }
+  if(!PyCapsule_CheckExact(address)) {
+    PyErr_SetString(PyExc_TypeError,
+            "Wrong argument! triangulateio handle required.");
+    return NULL;
+  }
+  object = PyCapsule_GetPointer(address, TRIANGULATEIO_NAME);
+  n = object->numberoftriangles;
+
+  return Py_BuildValue("i", n);
+}
+
+static PyObject *
 triangulate_GET_NODES(PyObject *self, PyObject *args) {
 
   /* Return a [ [(x,y), marker],..] */
@@ -372,12 +409,12 @@ triangulate_GET_NODES(PyObject *self, PyObject *args) {
   REAL x, y;
   
   if(!PyArg_ParseTuple(args, "O", 
-		       &address)) { 
+               &address)) { 
     return NULL;
   }
   if(!PyCapsule_CheckExact(address)) {
     PyErr_SetString(PyExc_TypeError,
-		    "Wrong argument! triangulateio handle required.");
+            "Wrong argument! triangulateio handle required.");
     return NULL;
   }
   object = PyCapsule_GetPointer(address, TRIANGULATEIO_NAME);
@@ -402,12 +439,12 @@ triangulate_GET_EDGES(PyObject *self, PyObject *args) {
   int i, i1, i2, m;
   
   if (!PyArg_ParseTuple(args, "O",
-		       &address)) { 
+               &address)) { 
     return NULL;
   }
   if (!PyCapsule_CheckExact(address)) {
     PyErr_SetString(PyExc_TypeError,
-		    "Wrong argument! triangulateio handle required.");
+            "Wrong argument! triangulateio handle required.");
     return NULL;
   }
   object = PyCapsule_GetPointer(address, TRIANGULATEIO_NAME);
@@ -433,12 +470,12 @@ triangulate_GET_TRIANGLES(PyObject *self, PyObject *args) {
   REAL a;
   
   if(!PyArg_ParseTuple(args, "O", 
-		       &address)) { 
+               &address)) { 
     return NULL;
   }
   if(!PyCapsule_CheckExact(address)) {
     PyErr_SetString(PyExc_TypeError,
-		    "Wrong argument! triangulateio handle required.");
+            "Wrong argument! triangulateio handle required.");
     return NULL;
   }
   object = PyCapsule_GetPointer(address, TRIANGULATEIO_NAME);
@@ -495,6 +532,10 @@ static PyMethodDef triangulate_methods[] = {
    "Set holes (h, [(x1,y1),(x2,y2),..])->None. \nh: handle.\n[(x1,y1),(x2,y2),..]: hole coordinates."},
   {"triangulate", triangulate_TRIANGULATE, METH_VARARGS, 
    "Triangulate or refine an existing triangulation (switches, h_in, h_out, h_vor)->None.\nswitches: a string (see Triangle doc).\nh_in, h_out, h_vor: handles to the input, output and Voronoi triangulateio structs."},
+  {"get_num_nodes", triangulate_GET_NUM_NODES, METH_VARARGS, 
+   "Return number of nodes."},
+  {"get_num_triangles", triangulate_GET_NUM_TRIANGLES, METH_VARARGS, 
+   "Return number of triangles."},
   {"get_nodes", triangulate_GET_NODES, METH_VARARGS, 
    "Return node dict from handle (h)->{i: [(x,y),[i1,i2,..], m],..}.\nh: handle.\n(x,y): node coordinates.\n[i1,i2..]: neighboring node indices.\nm: node marker (0=interior, 1=boundary)."},
   {"get_edges", triangulate_GET_EDGES, METH_VARARGS, 
