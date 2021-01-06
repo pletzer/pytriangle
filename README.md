@@ -24,7 +24,7 @@ pointInner = [(xn, yn), ...]
 markerInner = [0, ...]
 points = pointBoundary + pointInner
 markers = markerBoundary + markerInner
-t.setPoints(points, markers=markers)
+t.set_points(points, markers=markers)
 ```
 
 Create boundary segments, order is counterclockwise for the outer boundary. 
