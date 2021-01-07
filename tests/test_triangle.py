@@ -35,6 +35,13 @@ class TestTriangle(unittest.TestCase):
         t.set_segments(segs)
         t.triangulate(mode='pz', area=None)
 
+
+    def test_simple(self):
+
+        t = triangle.Triangle()
+        print('number of nodes/triangles: %d/%d' % 
+            (t.get_num_nodes(), t.get_num_triangles()))
+
     
     def test_circle_with_hole(self):
         
@@ -86,11 +93,17 @@ class TestTriangle(unittest.TestCase):
         t.set_attributes(att)
     
         t.triangulate(area=0.01)
+        print('number of nodes/triangles before refinement: %d/%d' % \
+                               (t.get_num_nodes(), t.get_num_triangles()))
         
         # refine multiple times the triangulation
         for i in range(10):
             t.refine(1.2)
-
+        print('number of nodes/triangles after refinement: %d/%d' % \
+                               (t.get_num_nodes(), t.get_num_triangles()))
+        print('number of nodes/triangles for coarsest level: %d/%d' % \
+                               (t.get_num_nodes(1), t.get_num_triangles(1)))
+        
         # take the last level
         nodes = t.get_nodes(level=-1)
         attributes = t.get_attributes(level=-1)
