@@ -79,8 +79,8 @@ class TestTriangle(unittest.TestCase):
         # set all markers
         mrk = mrko + mrki
 
-        # set attributes
-        att = [ (p[0], p[1], p[0]**2,) for p in pts ]
+        # set note attributes
+        node_att = [ (p[0], p[1], p[0]**2,) for p in pts ]
 
         # punch a hole, any point inside the hole will do
         hls = [(0.5, 0.)]
@@ -90,11 +90,16 @@ class TestTriangle(unittest.TestCase):
         t.set_points(pts, mrk)
         t.set_segments(seg)
         t.set_holes(hls)
-        t.set_node_attributes(att)
+        t.set_node_attributes(node_att)
     
         t.triangulate(area=0.01)
         print('number of nodes/triangles before refinement: %d/%d' % \
                                (t.get_num_nodes(), t.get_num_triangles()))
+
+        # add cell attributes
+        ncells = t.get_num_triangles()
+        cell_att = [(float(i), float(i)**2) for i in range(ncells)]
+        t.set_cell_attributes(cell_att)
         
         # refine multiple times the triangulation
         for i in range(10):
@@ -106,13 +111,13 @@ class TestTriangle(unittest.TestCase):
         
         # take the last level
         nodes = t.get_nodes(level=-1)
-        attributes = t.get_node_attributes(level=-1)
+        node_attributes = t.get_node_attributes(level=-1)
         
         # compute the interpolation error
         error = 0.
         for i in range(len(nodes)):
             x, y = nodes[i][0]
-            error += (attributes[i][0] - x)**2 + (attributes[i][1] - y)**2
+            error += (node_attributes[i][0] - x)**2 + (attributes[i][1] - y)**2
         error = math.sqrt(error/float(len(pts)))
         print('error = %g' % error)
         assert(abs(error) < 1.e-10)

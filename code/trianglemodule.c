@@ -8,6 +8,7 @@ Python interface module to double version of Triangle
 #define _NDIM 2
 #include "triangle.h"
 
+#define MSG_MAX_LENGTH 1024
 #define TRIANGULATEIO_NAME "triangulateio"
 
 #if defined(Py_DEBUG) || defined(DEBUG)
@@ -173,7 +174,7 @@ triangulate_SET_ATTRIBUTES(PyObject *self, PyObject *args) {
   npts  = PySequence_Length(atts);
   if(npts != object->numberofpoints) {
     PyErr_SetString(PyExc_RuntimeError, 
-      "Wrong number of attribute elements.");
+      "Wrong number of attributes.");
     return NULL;
   }
   /* assume number of atts to be the same for all nodes! */
@@ -196,7 +197,7 @@ triangulate_SET_ATTRIBUTES(PyObject *self, PyObject *args) {
 }
 
 static PyObject *
-triangulate_SET_TRIANGLE_ATTRIBUTES(PyObject *self, PyObject *args) {
+triangulate_SET_CELL_ATTRIBUTES(PyObject *self, PyObject *args) {
   PyObject *address, *atts, *elem;
   struct triangulateio *object;
   int ncells, natts, i, j;
@@ -219,8 +220,9 @@ triangulate_SET_TRIANGLE_ATTRIBUTES(PyObject *self, PyObject *args) {
 
   ncells  = PySequence_Length(atts);
   if(ncells != object->numberoftriangles) {
-    PyErr_SetString(PyExc_RuntimeError, 
-      "Wrong number of attribute elements.");
+  	char msg[MSG_MAX_LENGTH];
+  	sprintf(msg, "Wrong number of attributes, got %d expected %d", ncells, object->numberoftriangles);
+    PyErr_SetString(PyExc_RuntimeError, msg);
     return NULL;
   }
   /* assume number of atts to be the same for all triangles! */
@@ -278,7 +280,7 @@ triangulate_GET_ATTRIBUTES(PyObject *self, PyObject *args) {
 }
 
 static PyObject *
-triangulate_GET_TRIANGLE_ATTRIBUTES(PyObject *self, PyObject *args) {
+triangulate_GET_CELL_ATTRIBUTES(PyObject *self, PyObject *args) {
   PyObject *address, *elem, *val, *result;
   struct triangulateio *object;
   int ncells, natts, i, j;
@@ -295,7 +297,7 @@ triangulate_GET_TRIANGLE_ATTRIBUTES(PyObject *self, PyObject *args) {
   object = PyCapsule_GetPointer(address, TRIANGULATEIO_NAME);
 
   result = PyList_New(object->numberoftriangles);
-  ncells   = object->numberoftriangles;
+  ncells = object->numberoftriangles;
   natts  = object->numberoftriangleattributes;
   for(i = 0; i < ncells; ++i) {
     elem = PyTuple_New(natts);
@@ -612,10 +614,10 @@ static PyMethodDef triangulate_methods[] = {
    "Set node attributes (h, [(a1,a2,..),..])->None. \nh: handle.\n[(a1,a2,..),..]: attributes (a1,a2,..)."},
   {"get_node_attributes", triangulate_GET_ATTRIBUTES, METH_VARARGS, 
    "Get node attributes (h)->[(a1,a2,..),..]. \nh: handle."},
-  {"set_triangle_attributes", triangulate_SET_TRIANGLE_ATTRIBUTES, METH_VARARGS, 
-   "Set triangle attributes (h, [(a1,a2,..),..])->None. \nh: handle.\n[(a1,a2,..),..]: attributes (a1,a2,..)."},
-  {"get_triangle_attributes", triangulate_GET_TRIANGLE_ATTRIBUTES, METH_VARARGS, 
-   "Get triangle attributes (h)->[(a1,a2,..),..]. \nh: handle."},
+  {"set_cell_attributes", triangulate_SET_CELL_ATTRIBUTES, METH_VARARGS, 
+   "Set cell attributes (h, [(a1,a2,..),..])->None. \nh: handle.\n[(a1,a2,..),..]: attributes (a1,a2,..)."},
+  {"get_cell_attributes", triangulate_GET_CELL_ATTRIBUTES, METH_VARARGS, 
+   "Get cell attributes (h)->[(a1,a2,..),..]. \nh: handle."},
   {"set_segments", triangulate_SET_SEGMENTS, METH_VARARGS, 
    "Set segments (h, [(i,j),..])->None. \nh: handle.\n[(i,j),..]: segments."},
   {"set_holes", triangulate_SET_HOLES, METH_VARARGS, 

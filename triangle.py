@@ -28,7 +28,6 @@ class Triangle:
         self.has_points = False
         self.has_segmts = False
         self.has_trgltd = False
-        self.has_atts   = False
 
 
     def set_points(self, pts, markers=[]):
@@ -86,11 +85,18 @@ class Triangle:
         """
         Optionally invoked to set node attributes att=[(a1,..), ...]
         """
-        if len(att) == 0:
-            return
-        triangulate.set_node_attributes(self.hndls[0], att)
-        self.has_atts = True
+        if len(att) != 0:
+            triangulate.set_node_attributes(self.hndls[0], att)
         
+
+    def set_cell_attributes(self, att):
+
+        """
+        Optionally invoked to set cell attributes att=[(a1,..), ...]
+        """
+        if len(att) != 0:
+            triangulate.set_cell_attributes(self.hndls[0], att)
+
 
     def triangulate(self, area=None, mode='pzq27eQ'):
 
@@ -206,11 +212,26 @@ class Triangle:
         level: refinement level (-1 for the last level)
         """
         return triangulate.get_node_attributes(self.hndls[level])
+
         
+    def get_cell_attributes(self, level=-1):
+
+        """
+        Will return cell attributes [(a1,...), ....]. Here, level
+        can be used to retrieve previous triangulation refinements.
+        level: refinement level (-1 for the last level)
+        """
+        return triangulate.get_cell_attributes(self.hndls[level])
+
 
     # for backwars compatibility
     set_attributes = set_node_attributes
     get_attributes = get_node_attributes
+
+    # aliases
+    set_triangle_attributes = set_cell_attributes
+    get_triangle_attributes = get_cell_attributes
+
         
         
 
