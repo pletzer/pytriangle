@@ -165,8 +165,8 @@ triangulate_SET_POINT_ATTRIBUTES(PyObject *self, PyObject *args) {
     return NULL;
   }    
   if(!PySequence_Check(atts)) {
-    PyErr_SetString(PyExc_TypeError,
-      "Wrong 2nd argument! Sequence required (atts).");
+    sprintf(MSG, "ERROR in %s at line %d: wrong argument #2 ([(a0, ...),...] required)\n", __FILE__, __LINE__);
+    PyErr_SetString(PyExc_TypeError, MSG);
     return NULL;
   }
   object = PyCapsule_GetPointer(address, TRIANGULATEIO_NAME);  
@@ -247,8 +247,8 @@ triangulate_SET_SEGMENTS(PyObject *self, PyObject *args) {
     return NULL;
   }    
   if(!PySequence_Check(segs)) {
-    PyErr_SetString(PyExc_TypeError,
-      "Wrong 2nd argument! Sequence required (segs).");
+    sprintf(MSG, "ERROR in %s at line %d: wrong argument #2 ([(ia, ib),...] required)\n", __FILE__, __LINE__);
+    PyErr_SetString(PyExc_TypeError, MSG);
     return NULL;
   }
   object = PyCapsule_GetPointer(address, TRIANGULATEIO_NAME);  
@@ -284,8 +284,8 @@ triangulate_SET_HOLES(PyObject *self, PyObject *args) {
     return NULL;
   }    
   if(!PySequence_Check(xy)) {
-    PyErr_SetString(PyExc_TypeError,
-      "Wrong 2nd argument! Sequence required (xy).");
+    sprintf(MSG, "ERROR in %s at line %d: wrong argument #2 ([(x, y),...] required)\n", __FILE__, __LINE__);
+    PyErr_SetString(PyExc_TypeError, MSG);
     return NULL;
   }
   object = PyCapsule_GetPointer(address, TRIANGULATEIO_NAME);
