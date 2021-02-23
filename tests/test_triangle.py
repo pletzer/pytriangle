@@ -90,7 +90,7 @@ class TestTriangle(unittest.TestCase):
         t.set_points(pts, mrk)
         t.set_segments(seg)
         t.set_holes(hls)
-        t.set_attributes(att)
+        t.set_node_attributes(att)
     
         t.triangulate(area=0.01)
         print('number of nodes/triangles before refinement: %d/%d' % \
@@ -106,7 +106,7 @@ class TestTriangle(unittest.TestCase):
         
         # take the last level
         nodes = t.get_nodes(level=-1)
-        attributes = t.get_attributes(level=-1)
+        attributes = t.get_node_attributes(level=-1)
         
         # compute the interpolation error
         error = 0.

@@ -81,14 +81,14 @@ class Triangle:
         triangulate.set_holes(self.hndls[0], xy)
 
 
-    def set_attributes(self, att):
+    def set_node_attributes(self, att):
 
         """
         Optionally invoked to set node attributes att=[(a1,..), ...]
         """
         if len(att) == 0:
             return
-        triangulate.set_attributes(self.hndls[0], att)
+        triangulate.set_node_attributes(self.hndls[0], att)
         self.has_atts = True
         
 
@@ -198,17 +198,19 @@ class Triangle:
         return triangulate.get_triangles(self.hndls[level])
         
 
-    def get_attributes(self, level=-1):
+    def get_node_attributes(self, level=-1):
 
         """
         Will return node attributes [(a1,...), ....]. Here, level
         can be used to retrieve previous triangulation refinements.
         level: refinement level (-1 for the last level)
         """
-        return triangulate.get_attributes(self.hndls[level])
+        return triangulate.get_node_attributes(self.hndls[level])
         
 
-        
+    # for backwars compatibility
+    set_attributes = set_node_attributes
+    get_attributes = get_node_attributes
         
         
 
