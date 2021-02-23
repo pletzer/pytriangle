@@ -8,6 +8,7 @@ Python interface module to double version of Triangle
 #define _NDIM 2
 #include "triangle.h"
 
+static char MSG[1024];
 #define TRIANGULATEIO_NAME "triangulateio"
 
 #if defined(Py_DEBUG) || defined(DEBUG)
@@ -109,18 +110,18 @@ triangulate_SET_POINTS(PyObject *self, PyObject *args) {
     return NULL;
   }
   if(!PyCapsule_CheckExact(address)) {
-    PyErr_SetString(PyExc_TypeError,
-      "Wrong 1st argument! triangulateio handle required.");
+    sprintf(MSG, "ERROR in %s at line %d: wrong argument #1 (triangulateio handle required)\n", __FILE__, __LINE__);
+    PyErr_SetString(PyExc_TypeError, MSG);
     return NULL;
   }    
   if(!PySequence_Check(xy)) {
-    PyErr_SetString(PyExc_TypeError,
-      "Wrong 2nd argument! Sequence required (xy).");
+    sprintf(MSG, "ERROR in %s at line %d: wrong argument #2 ([(x, y), ...] required)\n", __FILE__, __LINE__);
+    PyErr_SetString(PyExc_TypeError, MSG);
     return NULL;
   }
   if(!PySequence_Check(mrks)) {
-    PyErr_SetString(PyExc_TypeError,
-      "Wrong 3rd argument! Sequence required (mrks).");
+    sprintf(MSG, "ERROR in %s at line %d: wrong argument #3 ([m, ...] required)\n", __FILE__, __LINE__);
+    PyErr_SetString(PyExc_TypeError, MSG);
     return NULL;
   }
   object = PyCapsule_GetPointer(address, TRIANGULATEIO_NAME);  
@@ -159,8 +160,8 @@ triangulate_SET_POINT_ATTRIBUTES(PyObject *self, PyObject *args) {
     return NULL;
   }
   if(!PyCapsule_CheckExact(address)) {
-    PyErr_SetString(PyExc_TypeError,
-      "Wrong 1st argument! triangulateio handle required.");
+    sprintf(MSG, "ERROR in %s at line %d: wrong argument #1 (triangulateio handle required)\n", __FILE__, __LINE__);
+    PyErr_SetString(PyExc_TypeError, MSG);
     return NULL;
   }    
   if(!PySequence_Check(atts)) {
@@ -195,6 +196,7 @@ triangulate_SET_POINT_ATTRIBUTES(PyObject *self, PyObject *args) {
   return Py_BuildValue("");
 }
 
+
 static PyObject *
 triangulate_GET_POINT_ATTRIBUTES(PyObject *self, PyObject *args) {
   PyObject *address, *elem, *val, *result;
@@ -206,8 +208,8 @@ triangulate_GET_POINT_ATTRIBUTES(PyObject *self, PyObject *args) {
     return NULL;
   }
   if(!PyCapsule_CheckExact(address)) {
-    PyErr_SetString(PyExc_TypeError,
-      "Wrong 1st argument! triangulateio handle required.");
+    sprintf(MSG, "ERROR in %s at line %d: wrong argument #1 (triangulateio handle required)\n", __FILE__, __LINE__);
+    PyErr_SetString(PyExc_TypeError, MSG);
     return NULL;
   }    
   object = PyCapsule_GetPointer(address, TRIANGULATEIO_NAME);
@@ -240,8 +242,8 @@ triangulate_SET_SEGMENTS(PyObject *self, PyObject *args) {
     return NULL;
   }
   if(!PyCapsule_CheckExact(address)) {
-    PyErr_SetString(PyExc_TypeError,
-      "Wrong 1st argument! triangulateio handle required.");
+    sprintf(MSG, "ERROR in %s at line %d: wrong argument #1 (triangulateio handle required)\n", __FILE__, __LINE__);
+    PyErr_SetString(PyExc_TypeError, MSG);
     return NULL;
   }    
   if(!PySequence_Check(segs)) {
@@ -277,8 +279,8 @@ triangulate_SET_HOLES(PyObject *self, PyObject *args) {
     return NULL;
   }
   if(!PyCapsule_CheckExact(address)) {
-    PyErr_SetString(PyExc_TypeError,
-      "Wrong 1st argument! triangulateio handle required.");
+    sprintf(MSG, "ERROR in %s at line %d: wrong argument #1 (triangulateio handle required)\n", __FILE__, __LINE__);
+    PyErr_SetString(PyExc_TypeError, MSG);
     return NULL;
   }    
   if(!PySequence_Check(xy)) {
@@ -315,18 +317,18 @@ triangulate_TRIANGULATE(PyObject *self, PyObject *args) {
     return NULL;
   }
   if(!PyCapsule_CheckExact(address_in)) {
-    PyErr_SetString(PyExc_TypeError,
-      "Wrong 2nd argument! input triangulateio handle required.");
+    sprintf(MSG, "ERROR in %s at line %d: wrong argument #2 (input triangulateio handle required)\n", __FILE__, __LINE__);
+    PyErr_SetString(PyExc_TypeError, MSG);
     return NULL;
   }    
   if(!PyCapsule_CheckExact(address_out)) {
-    PyErr_SetString(PyExc_TypeError,
-      "Wrong 3rd argument! output triangulateio handle required.");
+    sprintf(MSG, "ERROR in %s at line %d: wrong argument #3 (output triangulateio handle required)\n", __FILE__, __LINE__);
+    PyErr_SetString(PyExc_TypeError, MSG);
     return NULL;
   }    
   if(!PyCapsule_CheckExact(address_vor)) {
-    PyErr_SetString(PyExc_TypeError,
-      "Wrong 4th argument! voronoi triangulateio handle required.");
+    sprintf(MSG, "ERROR in %s at line %d: wrong argument #4 (Voronoi handle required)\n", __FILE__, __LINE__);
+    PyErr_SetString(PyExc_TypeError, MSG);
     return NULL;
   }    
   object_in  = PyCapsule_GetPointer(address_in,  TRIANGULATEIO_NAME);
@@ -367,8 +369,8 @@ triangulate_GET_NUM_POINTS(PyObject *self, PyObject *args) {
     return NULL;
   }
   if(!PyCapsule_CheckExact(address)) {
-    PyErr_SetString(PyExc_TypeError,
-            "Wrong argument! triangulateio handle required.");
+    sprintf(MSG, "ERROR in %s at line %d: wrong argument (triangulateio handle required)\n", __FILE__, __LINE__);
+    PyErr_SetString(PyExc_TypeError, MSG);
     return NULL;
   }
   object = PyCapsule_GetPointer(address, TRIANGULATEIO_NAME);
@@ -388,8 +390,8 @@ triangulate_GET_NUM_TRIANGLES(PyObject *self, PyObject *args) {
     return NULL;
   }
   if(!PyCapsule_CheckExact(address)) {
-    PyErr_SetString(PyExc_TypeError,
-            "Wrong argument! triangulateio handle required.");
+    sprintf(MSG, "ERROR in %s at line %d: wrong argument (triangulateio handle required)\n", __FILE__, __LINE__);
+    PyErr_SetString(PyExc_TypeError, MSG);
     return NULL;
   }
   object = PyCapsule_GetPointer(address, TRIANGULATEIO_NAME);
@@ -413,8 +415,8 @@ triangulate_GET_POINTS(PyObject *self, PyObject *args) {
     return NULL;
   }
   if(!PyCapsule_CheckExact(address)) {
-    PyErr_SetString(PyExc_TypeError,
-            "Wrong argument! triangulateio handle required.");
+    sprintf(MSG, "ERROR in %s at line %d: wrong argument (triangulateio handle required)\n", __FILE__, __LINE__);
+    PyErr_SetString(PyExc_TypeError, MSG);
     return NULL;
   }
   object = PyCapsule_GetPointer(address, TRIANGULATEIO_NAME);
@@ -443,8 +445,8 @@ triangulate_GET_EDGES(PyObject *self, PyObject *args) {
     return NULL;
   }
   if (!PyCapsule_CheckExact(address)) {
-    PyErr_SetString(PyExc_TypeError,
-            "Wrong argument! triangulateio handle required.");
+    sprintf(MSG, "ERROR in %s at line %d: wrong argument (triangulateio handle required)\n", __FILE__, __LINE__);
+    PyErr_SetString(PyExc_TypeError, MSG);
     return NULL;
   }
   object = PyCapsule_GetPointer(address, TRIANGULATEIO_NAME);
@@ -474,8 +476,8 @@ triangulate_GET_TRIANGLES(PyObject *self, PyObject *args) {
     return NULL;
   }
   if(!PyCapsule_CheckExact(address)) {
-    PyErr_SetString(PyExc_TypeError,
-            "Wrong argument! triangulateio handle required.");
+    sprintf(MSG, "ERROR in %s at line %d: wrong argument (triangulateio handle required)\n", __FILE__, __LINE__);
+    PyErr_SetString(PyExc_TypeError, MSG);
     return NULL;
   }
   object = PyCapsule_GetPointer(address, TRIANGULATEIO_NAME);
