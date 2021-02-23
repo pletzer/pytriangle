@@ -39,8 +39,8 @@ class TestTriangle(unittest.TestCase):
     def test_simple(self):
 
         t = triangle.Triangle()
-        print('number of nodes/triangles: %d/%d' % 
-            (t.get_num_nodes(), t.get_num_triangles()))
+        print('number of points/triangles: %d/%d' % 
+            (t.get_num_points(), t.get_num_triangles()))
 
     
     def test_circle_with_hole(self):
@@ -90,28 +90,28 @@ class TestTriangle(unittest.TestCase):
         t.set_points(pts, mrk)
         t.set_segments(seg)
         t.set_holes(hls)
-        t.set_attributes(att)
+        t.set_point_attributes(att)
     
         t.triangulate(area=0.01)
-        print('number of nodes/triangles before refinement: %d/%d' % \
-                               (t.get_num_nodes(), t.get_num_triangles()))
+        print('number of points/triangles before refinement: %d/%d' % \
+                               (t.get_num_points(), t.get_num_triangles()))
         
         # refine multiple times the triangulation
         for i in range(10):
             t.refine(1.2)
-        print('number of nodes/triangles after refinement: %d/%d' % \
-                               (t.get_num_nodes(), t.get_num_triangles()))
-        print('number of nodes/triangles for coarsest level: %d/%d' % \
-                               (t.get_num_nodes(1), t.get_num_triangles(1)))
+        print('number of points/triangles after refinement: %d/%d' % \
+                               (t.get_num_points(), t.get_num_triangles()))
+        print('number of points/triangles for coarsest level: %d/%d' % \
+                               (t.get_num_points(1), t.get_num_triangles(1)))
         
         # take the last level
-        nodes = t.get_nodes(level=-1)
-        attributes = t.get_attributes(level=-1)
+        points = t.get_points(level=-1)
+        attributes = t.get_point_attributes(level=-1)
         
         # compute the interpolation error
         error = 0.
-        for i in range(len(nodes)):
-            x, y = nodes[i][0]
+        for i in range(len(points)):
+            x, y = points[i][0]
             error += (attributes[i][0] - x)**2 + (attributes[i][1] - y)**2
         error = math.sqrt(error/float(len(pts)))
         print('error = %g' % error)

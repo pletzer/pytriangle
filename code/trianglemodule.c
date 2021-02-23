@@ -149,7 +149,7 @@ triangulate_SET_POINTS(PyObject *self, PyObject *args) {
 }
 
 static PyObject *
-triangulate_SET_ATTRIBUTES(PyObject *self, PyObject *args) {
+triangulate_SET_POINT_ATTRIBUTES(PyObject *self, PyObject *args) {
   PyObject *address, *atts, *elem;
   struct triangulateio *object;
   int npts, natts, i, j;
@@ -176,7 +176,7 @@ triangulate_SET_ATTRIBUTES(PyObject *self, PyObject *args) {
       "Wrong number of attribute elements.");
     return NULL;
   }
-  /* assume number of atts to be the same for all nodes! */
+  /* assume number of atts to be the same for all points! */
   if(npts > 0) {
     natts = PySequence_Length( PySequence_Fast_GET_ITEM(atts, 0) );
     if(natts != object->numberofpointattributes) {
@@ -196,7 +196,7 @@ triangulate_SET_ATTRIBUTES(PyObject *self, PyObject *args) {
 }
 
 static PyObject *
-triangulate_GET_ATTRIBUTES(PyObject *self, PyObject *args) {
+triangulate_GET_POINT_ATTRIBUTES(PyObject *self, PyObject *args) {
   PyObject *address, *elem, *val, *result;
   struct triangulateio *object;
   int npts, natts, i, j;
@@ -357,7 +357,7 @@ triangulate_TRIANGULATE(PyObject *self, PyObject *args) {
 }
 
 static PyObject *
-triangulate_GET_NUM_NODES(PyObject *self, PyObject *args) {
+triangulate_GET_NUM_POINTS(PyObject *self, PyObject *args) {
   PyObject *address;
   struct triangulateio *object;
   int n;
@@ -399,7 +399,7 @@ triangulate_GET_NUM_TRIANGLES(PyObject *self, PyObject *args) {
 }
 
 static PyObject *
-triangulate_GET_NODES(PyObject *self, PyObject *args) {
+triangulate_GET_POINTS(PyObject *self, PyObject *args) {
 
   /* Return a [ [(x,y), marker],..] */
 
@@ -464,7 +464,7 @@ triangulate_GET_EDGES(PyObject *self, PyObject *args) {
 
 static PyObject *
 triangulate_GET_TRIANGLES(PyObject *self, PyObject *args) {
-  PyObject *address, *holder, *nodes, *kk, *atts, *aa, *elem, *neigh, *mm;
+  PyObject *address, *holder, *points, *kk, *atts, *aa, *elem, *neigh, *mm;
   struct triangulateio *object;
   int i, j, k, m, nc, na, nt;
   REAL a;
@@ -490,13 +490,13 @@ triangulate_GET_TRIANGLES(PyObject *self, PyObject *args) {
   na = object->numberoftriangleattributes;
 
   for(i = 0; i < object->numberoftriangles; ++i) {
-    nodes = PyList_New(nc);
+    points = PyList_New(nc);
     neigh = PyTuple_New(nt);
     atts  = PyList_New(na);
     for(j = 0; j < nc; ++j) {
       k = object->trianglelist[nc*i+j];
       kk = PyLong_FromLong((long) k);
-      PyList_SET_ITEM(nodes, j, kk);
+      PyList_SET_ITEM(points, j, kk);
     }
     for(j = 0; j < nt; ++j) {
       m = object->neighborlist[nt*i+j];
@@ -509,7 +509,7 @@ triangulate_GET_TRIANGLES(PyObject *self, PyObject *args) {
       PyList_SET_ITEM(atts, j, aa);
     }
     elem = PyTuple_New(3);
-    PyTuple_SET_ITEM(elem, 0, nodes);
+    PyTuple_SET_ITEM(elem, 0, points);
     PyTuple_SET_ITEM(elem, 1, neigh);
     PyTuple_SET_ITEM(elem, 2, atts );
     PyList_SET_ITEM(holder, i, elem);
@@ -521,27 +521,27 @@ triangulate_GET_TRIANGLES(PyObject *self, PyObject *args) {
 static PyMethodDef triangulate_methods[] = {
   {"new", triangulate_NEW, METH_VARARGS, "Return new handle to triangulateio structure ()->h."},
   {"set_points", triangulate_SET_POINTS, METH_VARARGS, 
-   "Set points and markers (h, [(x1,y1),(x2,y2)..], [m1,m2..])->None. \nh: handle.\n[(x1,y1),(x2,y2)..]: coordinates.\n[m1,m2,..]: node markers (1 per node)."},
-  {"set_attributes", triangulate_SET_ATTRIBUTES, METH_VARARGS, 
-   "Set node attributes (h, [(a1,a2,..),..])->None. \nh: handle.\n[(a1,a2,..),..]: atributes (a1,a2,..)."},
-  {"get_attributes", triangulate_GET_ATTRIBUTES, METH_VARARGS, 
-   "Get node attributes (h)->[(a1,a2,..),..]. \nh: handle."},
+   "Set points and markers (h, [(x1,y1),(x2,y2)..], [m1,m2..])->None. \nh: handle.\n[(x1,y1),(x2,y2)..]: coordinates.\n[m1,m2,..]: point markers (1 per point)."},
+  {"set_point_attributes", triangulate_SET_POINT_ATTRIBUTES, METH_VARARGS, 
+   "Set point attributes (h, [(a1,a2,..),..])->None. \nh: handle.\n[(a1,a2,..),..]: atributes (a1,a2,..)."},
+  {"get_point_attributes", triangulate_GET_POINT_ATTRIBUTES, METH_VARARGS, 
+   "Get point attributes (h)->[(a1,a2,..),..]. \nh: handle."},
   {"set_segments", triangulate_SET_SEGMENTS, METH_VARARGS, 
    "Set segments (h, [(i,j),..])->None. \nh: handle.\n[(i,j),..]: segments."},
   {"set_holes", triangulate_SET_HOLES, METH_VARARGS, 
    "Set holes (h, [(x1,y1),(x2,y2),..])->None. \nh: handle.\n[(x1,y1),(x2,y2),..]: hole coordinates."},
   {"triangulate", triangulate_TRIANGULATE, METH_VARARGS, 
    "Triangulate or refine an existing triangulation (switches, h_in, h_out, h_vor)->None.\nswitches: a string (see Triangle doc).\nh_in, h_out, h_vor: handles to the input, output and Voronoi triangulateio structs."},
-  {"get_num_nodes", triangulate_GET_NUM_NODES, METH_VARARGS, 
-   "Return number of nodes."},
+  {"get_num_points", triangulate_GET_NUM_POINTS, METH_VARARGS, 
+   "Return number of points."},
   {"get_num_triangles", triangulate_GET_NUM_TRIANGLES, METH_VARARGS, 
    "Return number of triangles."},
-  {"get_nodes", triangulate_GET_NODES, METH_VARARGS, 
-   "Return node dict from handle (h)->{i: [(x,y),[i1,i2,..], m],..}.\nh: handle.\n(x,y): node coordinates.\n[i1,i2..]: neighboring node indices.\nm: node marker (0=interior, 1=boundary)."},
+  {"get_points", triangulate_GET_POINTS, METH_VARARGS, 
+   "Return dict from handle (h)->{i: [(x,y),[i1,i2,..], m],..}.\nh: handle.\n(x,y): point coordinates.\n[i1,i2..]: neighboring point indices.\nm: point marker (0=interior, 1=boundary)."},
   {"get_edges", triangulate_GET_EDGES, METH_VARARGS, 
-   "Return list of edge nodes with edge markers (h)->[((i1,i2),m),..].\nh: handle.\n(i1,i2): node indices.\nm: edge markers."},
+   "Return list of edge points with edge markers (h)->[((i1,i2),m),..].\nh: handle.\n(i1,i2): point indices.\nm: edge markers."},
   {"get_triangles", triangulate_GET_TRIANGLES, METH_VARARGS, 
-   "Return list of triangles (h)->[([i1,i2,i3,..],(k1,k2,k3), [a1,a2,..]),..].\nh: handle.\ni1,i2,i3,..: node indices at the triangle corners, optionally followed by intermediate nodes.\n(k1,k2,k3): neighboring triangle indices;\na1,a2..: triangle cell attributes."},
+   "Return list of triangles (h)->[([i1,i2,i3,..],(k1,k2,k3), [a1,a2,..]),..].\nh: handle.\ni1,i2,i3,..: point indices at the triangle corners, optionally followed by intermediate points.\n(k1,k2,k3): neighboring triangle indices;\na1,a2..: triangle cell attributes."},
   {NULL, NULL, 0, NULL}
 };
 
