@@ -133,7 +133,7 @@ triangulate_SET_POINTS(PyObject *self, PyObject *args) {
       if(object->pointmarkerlist) free(object->pointmarkerlist);
       object->pointlist = malloc(_NDIM * npts * sizeof(REAL));
       /* object->pointattributelist = malloc(natts * npts * sizeof(REAL)); */
-      object->pointmarkerlist    = malloc(npts * sizeof(int));
+      object->pointmarkerlist = malloc(npts * sizeof(int));
     }
     object->numberofpoints = npts;
   }

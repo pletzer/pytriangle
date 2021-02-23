@@ -77,7 +77,7 @@ class TestTriangle(unittest.TestCase):
         # all segments
         seg = sgo + sgi
         # set all markers
-        mrk = mrko + mrki
+        mrk = mrko + mrki + [-1 for i in range(len(pts_inside))]
 
         # set attributes
         att = [ (p[0], p[1], p[0]**2,) for p in pts ]
