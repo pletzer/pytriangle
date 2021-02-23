@@ -13,12 +13,11 @@ class Triangle:
     def __init__(self):
 
         """
-        Constructor. 
+        Constructor
         """
 
         # create handles to hold the
         # triangulation structures
-
         self.hndls = [triangulate.new(),]
         self.h_vor =  triangulate.new()
         
@@ -28,7 +27,6 @@ class Triangle:
         self.has_points = False
         self.has_segmts = False
         self.has_trgltd = False
-        self.has_atts   = False
 
 
     def set_points(self, pts, markers=[]):
@@ -86,10 +84,7 @@ class Triangle:
         """
         Optionally invoked to set point attributes att=[(a1,..), ...]
         """
-        if len(att) == 0:
-            return
         triangulate.set_point_attributes(self.hndls[0], att)
-        self.has_atts = True
         
 
     def triangulate(self, area=None, mode='pzq27eQ'):
