@@ -91,6 +91,10 @@ class TestTriangle(unittest.TestCase):
         t.set_segments(seg)
         t.set_holes(hls)
         t.set_point_attributes(att)
+
+        # checking backward compatibility
+        t.set_nodes(pts, mrk)
+        t.set_attributes(att)
     
         t.triangulate(area=0.01)
         print('number of points/triangles before refinement: %d/%d' % \
@@ -107,6 +111,9 @@ class TestTriangle(unittest.TestCase):
         # take the last level
         points = t.get_points(level=-1)
         attributes = t.get_point_attributes(level=-1)
+
+        # checking backwards compatibility
+        attributes = t.get_attributes(level=-1)
         
         # compute the interpolation error
         error = 0.

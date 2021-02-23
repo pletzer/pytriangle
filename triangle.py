@@ -208,7 +208,12 @@ class Triangle:
         return triangulate.get_point_attributes(self.hndls[level])
         
 
-        
+    # backward compatibility
+    get_num_nodes = get_num_points
+    set_nodes = set_points
+    get_nodes = get_points
+    set_attributes = set_point_attributes
+    get_attributes = get_point_attributes
         
         
 
