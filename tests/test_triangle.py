@@ -93,18 +93,26 @@ class TestTriangle(unittest.TestCase):
         t.set_point_attributes(att)
 
         # checking backward compatibility
-        t.set_nodes(pts, mrk)
-        t.set_attributes(att)
+        t.set_nodes(pts, mrk)  # same as set_points
+        t.set_attributes(att) # same as set_point_attributes
     
-        t.triangulate(area=0.01)
+        t.triangulate(area=0.01, mode='pzq27eQ')
         print('number of points/triangles before refinement: %d/%d' % \
                                (t.get_num_points(), t.get_num_triangles()))
 
-        #t.set_triangle_attributes([(float(i), float(i)**2) for i in range(t.get_num_triangles())])
+       	pts1 = t.get_points(level=1)
+       	ijks1 = [tri[0] for tri in t.get_triangles(level=1)]
+
+       	# mid positions of the triangles
+        xy_mid1 = [ ((pts1[ijk[0]][0][0] + pts1[ijk[1]][0][0] + pts1[ijk[2]][0][0])/3.,
+                     (pts1[ijk[0]][0][1] + pts1[ijk[1]][0][1] + pts1[ijk[2]][0][1])/3.) for ijk in ijks1]
+
+        t.set_triangle_attributes(xy_mid1)
         
         # refine multiple times the triangulation
         for i in range(10):
             t.refine(1.2)
+
         print('number of points/triangles after refinement: %d/%d' % \
                                (t.get_num_points(), t.get_num_triangles()))
         print('number of points/triangles for coarsest level: %d/%d' % \
@@ -112,16 +120,18 @@ class TestTriangle(unittest.TestCase):
         
         # take the last level
         points = t.get_points(level=-1)
-        attributes = t.get_point_attributes(level=-1)
+        point_attributes = t.get_point_attributes(level=-1)
 
-        # checking backwards compatibility for pooint attributes
-        attributes = t.get_attributes(level=-1)
+        # checking backwards compatibility for point attributes
+        point_attributes = t.get_attributes(level=-1)
+
+        triangle_attributes = t.get_triangle_attributes(level=-1)
         
         # compute the interpolation error
         error = 0.
         for i in range(len(points)):
             x, y = points[i][0]
-            error += (attributes[i][0] - x)**2 + (attributes[i][1] - y)**2
+            error += (point_attributes[i][0] - x)**2 + (point_attributes[i][1] - y)**2
         error = math.sqrt(error/float(len(pts)))
         print('error = %g' % error)
         assert(abs(error) < 1.e-10)

@@ -98,7 +98,7 @@ class Triangle:
 
         @param att [(a0,..), ...]
         """
-        triangulate.set_triangle_attributes(self.hndls[0], att)
+        triangulate.set_triangle_attributes(self.hndls[1], att)
 
 
     def triangulate(self, area=None, mode='pzq27eQ'):
