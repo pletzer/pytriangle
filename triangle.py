@@ -225,6 +225,19 @@ class Triangle:
         return triangulate.get_point_attributes(self.hndls[level])
         
 
+    def get_triangle_attributes(self, level=-1):
+
+        """
+        Get the triangle attributes.
+
+        @param level refinement level (-1 for the last level). The coarsest level is 1. The level can be used
+                     to retrieve previous triangulation refinements: level=-1 will retrieve the last, 
+                     level=-2 the previous one, etc.
+        @return [(a0,...), ....]
+        """
+        return triangulate.get_triangle_attributes(self.hndls[level])
+
+
     # backward compatibility
     get_num_nodes = get_num_points
     set_nodes = set_points

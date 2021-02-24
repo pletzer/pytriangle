@@ -214,22 +214,54 @@ triangulate_GET_POINT_ATTRIBUTES(PyObject *self, PyObject *args) {
   }    
   object = PyCapsule_GetPointer(address, TRIANGULATEIO_NAME);
 
-  result = PyList_New(object->numberofpoints);
   npts   = object->numberofpoints;
+  result = PyList_New(npts);
   natts  = object->numberofpointattributes;
   for(i = 0; i < npts; ++i) {
     elem = PyTuple_New(natts);
     for(j = 0; j < natts; ++j) {
       val = PyFloat_FromDouble(object->pointattributelist[natts*i+j]);
       PyTuple_SET_ITEM(elem, j, val);
-      /* Py_DECREF(val); */
     }
     PyList_SET_ITEM(result, i, elem);
-    /* Py_DECREF(elem); */
   }
 
   return result;
 }
+
+
+static PyObject *
+triangulate_GET_TRIANGLE_ATTRIBUTES(PyObject *self, PyObject *args) {
+  PyObject *address, *elem, *val, *result;
+  struct triangulateio *object;
+  int ntri, natts, i, j;
+
+  if(!PyArg_ParseTuple(args,(char *)"O", 
+               &address)) { 
+    return NULL;
+  }
+  if(!PyCapsule_CheckExact(address)) {
+    sprintf(MSG, "ERROR in %s at line %d: wrong argument #1 (triangulateio handle required)\n", __FILE__, __LINE__);
+    PyErr_SetString(PyExc_TypeError, MSG);
+    return NULL;
+  }    
+  object = PyCapsule_GetPointer(address, TRIANGULATEIO_NAME);
+
+  ntri = object->numberoftriangles;
+  result = PyList_New(ntri);
+  natts  = object->numberoftriangleattributes;
+  for(i = 0; i < ntri; ++i) {
+    elem = PyTuple_New(natts);
+    for(j = 0; j < natts; ++j) {
+      val = PyFloat_FromDouble(object->triangleattributelist[natts*i + j]);
+      PyTuple_SET_ITEM(elem, j, val);
+    }
+    PyList_SET_ITEM(result, i, elem);
+  }
+
+  return result;
+}
+
 
 static PyObject *
 triangulate_SET_SEGMENTS(PyObject *self, PyObject *args) {
@@ -528,6 +560,8 @@ static PyMethodDef triangulate_methods[] = {
    "Set point attributes (h, [(a1,a2,..),..])->None. \nh: handle.\n[(a1,a2,..),..]: atributes (a1,a2,..)."},
   {"get_point_attributes", triangulate_GET_POINT_ATTRIBUTES, METH_VARARGS, 
    "Get point attributes (h)->[(a1,a2,..),..]. \nh: handle."},
+  {"get_triangle_attributes", triangulate_GET_TRIANGLE_ATTRIBUTES, METH_VARARGS, 
+   "Get triangle attributes (h)->[(a1,a2,..),..]. \nh: handle."},
   {"set_segments", triangulate_SET_SEGMENTS, METH_VARARGS, 
    "Set segments (h, [(i,j),..])->None. \nh: handle.\n[(i,j),..]: segments."},
   {"set_holes", triangulate_SET_HOLES, METH_VARARGS, 
