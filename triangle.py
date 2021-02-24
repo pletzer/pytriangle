@@ -13,12 +13,11 @@ class Triangle:
     def __init__(self):
 
         """
-        Constructor. 
+        Constructor
         """
 
         # create handles to hold the
         # triangulation structures
-
         self.hndls = [triangulate.new(),]
         self.h_vor =  triangulate.new()
         
@@ -28,14 +27,15 @@ class Triangle:
         self.has_points = False
         self.has_segmts = False
         self.has_trgltd = False
-        self.has_atts   = False
 
 
     def set_points(self, pts, markers=[]):
 
         """
-        Set points. Use this to set the boundary points. Can
-        also set interior points. 
+        Set the points
+
+        @param pts [(x, y),...]
+        @param markers [m, ...] where m is 1 on the outer boundary and 0 in the interior or internal boundary)
         """
 
         if not markers:
@@ -60,12 +60,13 @@ class Triangle:
     def set_segments(self, segs):
 
         """
-        Invoke this method after 'set_points' to set the boundary
-        contour. Here, segs is a list [ (i1,i2),.. ] of segments
-        with i1,i2 being node indices. Ordering need not go
-        counterclockwise.
-        """
+        Set the boundary contour. 
 
+        @param segs [(p0, p1), ....] where p0 and p1 are point indices. The ordering is counterclockwise for an outer boundary
+                    and clockwise for an internal boundary.
+
+        @note invoke this method after 'set_points'.
+        """
         triangulate.set_segments(self.hndls[0], segs)
         self.has_sgmts = True
         
@@ -73,33 +74,43 @@ class Triangle:
     def set_holes(self, xy):
 
         """
-        Optionally invoked when the domain contains holes. Here,
-        xy = [ (x1, y1), ... ] where (x1,y1) is a point inside
-        a hole
-        """
+        Set the list of points in the holes. 
 
+        @param xy [ (x0, y0), ... ] where (x0,y0) is a point inside a hole
+        """
         triangulate.set_holes(self.hndls[0], xy)
 
 
-    def set_attributes(self, att):
+    def set_point_attributes(self, att):
 
         """
-        Optionally invoked to set node attributes att=[(a1,..), ...]
+        Set the point attributes.
+
+        @param att [(a0,..), ...]
         """
-        if len(att) == 0:
-            return
-        triangulate.set_attributes(self.hndls[0], att)
-        self.has_atts = True
+        triangulate.set_point_attributes(self.hndls[0], att)
         
+
+    def set_triangle_attributes(self, att):
+
+        """
+        Set the triangle attributes.
+
+        @param att [(a0,..), ...]
+        """
+        triangulate.set_triangle_attributes(self.hndls[1], att)
+
 
     def triangulate(self, area=None, mode='pzq27eQ'):
 
         """
-        Perform an initial triangulation. Invoke this after setting
-        the boundary points, segments, and optionally hole positions.
-        Here, area is a max area constraint and mode a string of TRIANGLE
-        switches. Check the TRIANGLE doc for more info about mode:
+        Perform an initial triangulation.
+
+        @param area is a max area constraint
+        @param mode a string of TRIANGLE switches. Refer to the TRIANGLE doc for more info about mode:
         http://www.cs.cmu.edu/~quake/triangle.switch.html
+
+        @note invoke this after setting the boundary points, segments, and optionally hole positions.
         """
 
         if not self.has_points and not self.has_segmts:
@@ -124,18 +135,22 @@ class Triangle:
         self.has_trgltd = True
 
 
-    def get_num_nodes(self, level=-1):
+    def get_num_points(self, level=-1):
         """
-        Get the number of nodes
-        level: refinement level (-1 for the last level). The coarsest level is 1.
+        Get the number of nodes/points.
+
+        @param level refinement level (-1 for the last level). The coarsest level is 1.
+        @return number
         """
-        return triangulate.get_num_nodes(self.hndls[level])
+        return triangulate.get_num_points(self.hndls[level])
 
         
     def get_num_triangles(self, level=-1):
         """
-        Get the number of triangles
-        level: refinement level (-1 for the last level). The coarsest level is 1.
+        Get the number of cells/triangles.
+
+        @param level refinement level (-1 for the last level). The coarsest level is 1
+        @return number
         """
         return triangulate.get_num_triangles(self.hndls[level])
 
@@ -143,9 +158,11 @@ class Triangle:
     def refine(self, area_ratio=2.0):
 
         """
-        Apply a refinement to the triangulation. Should be called after
-        performing an initial triangulation.
-        area_ratio: represents the max triangle area reduction factor
+        Refine the triangulation.
+
+        @param area_ratio represents the max triangle area reduction factor
+
+        @note should be called after performing an initial triangulation.
         """
 
         if not self.has_trgltd:
@@ -164,25 +181,29 @@ class Triangle:
                                 self.hndls[-1], self.h_vor)
 
 
-    def get_nodes(self, level=-1):
+    def get_points(self, level=-1):
 
         """
-        Return list [ [(x, y), marker], ...] where marker is 1
-        on the boundary and 0 inside. Here, level can be used
-        to retrieve previous triangulation refinements: level=-1
-        will retrieve the last, level=-2 the previous one, etc.
-        level: refinement level (-1 for the last level). The coarsest level is 1.
-        """
-        return triangulate.get_nodes(self.hndls[level])
+        Get the points and their markers.
 
+        @param level refinement level (-1 for the last level). The coarsest level is 1. The level can be used
+                     to retrieve previous triangulation refinements: level=-1 will retrieve the last, 
+                     level=-2 the previous one, etc.
+        @return [ [(x, y), marker], ...] where marker is 1 on the boundary and 0 inside. Here, 
+        """
+        return triangulate.get_points(self.hndls[level])
 
 
     def get_edges(self, level=-1):
 
         """
-        Return list of edges [((i1, i2), m),..), (i1,i2): node indices, 
+        Get the list of edges.
+
+        @param level refinement level (-1 for the last level). The coarsest level is 1. The level can be used
+                     to retrieve previous triangulation refinements: level=-1 will retrieve the last, 
+                     level=-2 the previous one, etc.
+        @return [((p0, p1), m),..) where (p0, p1) are point indices and 
         m is the boundary marker (0=interior, 1=boundary)
-        level: refinement level (-1 for the last level). The coarsest level is 1.
         """
         return triangulate.get_edges(self.hndls[level])
         
@@ -190,25 +211,49 @@ class Triangle:
     def get_triangles(self, level=-1):
 
         """
-        Return list of triangles [([i1,i2,i3,..], (k1,k2,k3), [a1,a2,..]),..]
-        i1,i2,i3,..: node indices at the triangle corners, optionally
-        followed by intermediate nodes (k1,k2,k3), a1,a2.. are triangle cell attributes
-        level: refinement level (-1 for the last level). The coarsest level is 1.
+        Get the list of triangles.
+
+        @param level refinement level (-1 for the last level). The coarsest level is 1. The level can be used
+                     to retrieve previous triangulation refinements: level=-1 will retrieve the last, 
+                     level=-2 the previous one, etc.
+        @return [([p0, p1, p2,..], (k0,k1,k2), [a0,a1,..]),..] where p0, p1, p2,.. are the 
+        point indices at the triangle corners, optionally followed by intermediate points (k0, k1, k2) and triangle cell attributes a1,a2.. 
         """
         return triangulate.get_triangles(self.hndls[level])
         
 
-    def get_attributes(self, level=-1):
+    def get_point_attributes(self, level=-1):
 
         """
-        Will return node attributes [(a1,...), ....]. Here, level
-        can be used to retrieve previous triangulation refinements.
-        level: refinement level (-1 for the last level)
+        Get the point attributes.
+
+        @param level refinement level (-1 for the last level). The coarsest level is 1. The level can be used
+                     to retrieve previous triangulation refinements: level=-1 will retrieve the last, 
+                     level=-2 the previous one, etc.
+        @return [(a0,...), ....]
         """
-        return triangulate.get_attributes(self.hndls[level])
+        return triangulate.get_point_attributes(self.hndls[level])
         
 
-        
+    def get_triangle_attributes(self, level=-1):
+
+        """
+        Get the triangle attributes.
+
+        @param level refinement level (-1 for the last level). The coarsest level is 1. The level can be used
+                     to retrieve previous triangulation refinements: level=-1 will retrieve the last, 
+                     level=-2 the previous one, etc.
+        @return [(a0,...), ....]
+        """
+        return triangulate.get_triangle_attributes(self.hndls[level])
+
+
+    # backward compatibility
+    get_num_nodes = get_num_points
+    set_nodes = set_points
+    get_nodes = get_points
+    set_attributes = set_point_attributes
+    get_attributes = get_point_attributes
         
         
 

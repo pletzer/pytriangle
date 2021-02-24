@@ -8,6 +8,7 @@ Python interface module to double version of Triangle
 #define _NDIM 2
 #include "triangle.h"
 
+static char MSG[1024];
 #define TRIANGULATEIO_NAME "triangulateio"
 
 #if defined(Py_DEBUG) || defined(DEBUG)
@@ -109,18 +110,18 @@ triangulate_SET_POINTS(PyObject *self, PyObject *args) {
     return NULL;
   }
   if(!PyCapsule_CheckExact(address)) {
-    PyErr_SetString(PyExc_TypeError,
-      "Wrong 1st argument! triangulateio handle required.");
+    sprintf(MSG, "ERROR in %s at line %d: wrong argument #1 (triangulateio handle required)\n", __FILE__, __LINE__);
+    PyErr_SetString(PyExc_TypeError, MSG);
     return NULL;
   }    
   if(!PySequence_Check(xy)) {
-    PyErr_SetString(PyExc_TypeError,
-      "Wrong 2nd argument! Sequence required (xy).");
+    sprintf(MSG, "ERROR in %s at line %d: wrong argument #2 ([(x, y), ...] required)\n", __FILE__, __LINE__);
+    PyErr_SetString(PyExc_TypeError, MSG);
     return NULL;
   }
   if(!PySequence_Check(mrks)) {
-    PyErr_SetString(PyExc_TypeError,
-      "Wrong 3rd argument! Sequence required (mrks).");
+    sprintf(MSG, "ERROR in %s at line %d: wrong argument #3 ([m, ...] required)\n", __FILE__, __LINE__);
+    PyErr_SetString(PyExc_TypeError, MSG);
     return NULL;
   }
   object = PyCapsule_GetPointer(address, TRIANGULATEIO_NAME);  
@@ -133,7 +134,7 @@ triangulate_SET_POINTS(PyObject *self, PyObject *args) {
       if(object->pointmarkerlist) free(object->pointmarkerlist);
       object->pointlist = malloc(_NDIM * npts * sizeof(REAL));
       /* object->pointattributelist = malloc(natts * npts * sizeof(REAL)); */
-      object->pointmarkerlist    = malloc(npts * sizeof(int));
+      object->pointmarkerlist = malloc(npts * sizeof(int));
     }
     object->numberofpoints = npts;
   }
@@ -149,7 +150,7 @@ triangulate_SET_POINTS(PyObject *self, PyObject *args) {
 }
 
 static PyObject *
-triangulate_SET_ATTRIBUTES(PyObject *self, PyObject *args) {
+triangulate_SET_POINT_ATTRIBUTES(PyObject *self, PyObject *args) {
   PyObject *address, *atts, *elem;
   struct triangulateio *object;
   int npts, natts, i, j;
@@ -159,13 +160,13 @@ triangulate_SET_ATTRIBUTES(PyObject *self, PyObject *args) {
     return NULL;
   }
   if(!PyCapsule_CheckExact(address)) {
-    PyErr_SetString(PyExc_TypeError,
-      "Wrong 1st argument! triangulateio handle required.");
+    sprintf(MSG, "ERROR in %s at line %d: wrong argument #1 (triangulateio handle required)\n", __FILE__, __LINE__);
+    PyErr_SetString(PyExc_TypeError, MSG);
     return NULL;
   }    
   if(!PySequence_Check(atts)) {
-    PyErr_SetString(PyExc_TypeError,
-      "Wrong 2nd argument! Sequence required (atts).");
+    sprintf(MSG, "ERROR in %s at line %d: wrong argument #2 ([(a0, ...),...] required)\n", __FILE__, __LINE__);
+    PyErr_SetString(PyExc_TypeError, MSG);
     return NULL;
   }
   object = PyCapsule_GetPointer(address, TRIANGULATEIO_NAME);  
@@ -176,27 +177,80 @@ triangulate_SET_ATTRIBUTES(PyObject *self, PyObject *args) {
       "Wrong number of attribute elements.");
     return NULL;
   }
-  /* assume number of atts to be the same for all nodes! */
+
+  natts = 0;
+  /* assume number of atts to be the same for all points! */
   if(npts > 0) {
     natts = PySequence_Length( PySequence_Fast_GET_ITEM(atts, 0) );
-    if(natts != object->numberofpointattributes) {
-      if(object->pointattributelist) free(object->pointattributelist);
-      object->pointattributelist = malloc(natts * npts * sizeof(REAL));
-    }
-    object->numberofpointattributes = natts;
-    for(i = 0; i < npts; ++i) {
-      elem = PySequence_Fast_GET_ITEM(atts, i);
-      for(j = 0; j < natts; ++j) {
-        object->pointattributelist[natts*i+j] = PyFloat_AsDouble(PySequence_Fast_GET_ITEM(elem, j));
-      }
+  }
+  object->numberofpointattributes = natts;
+
+  if(object->pointattributelist) free(object->pointattributelist);
+  object->pointattributelist = malloc(natts * npts * sizeof(REAL));
+
+  for(i = 0; i < npts; ++i) {
+    elem = PySequence_Fast_GET_ITEM(atts, i);
+    for(j = 0; j < natts; ++j) {
+    object->pointattributelist[natts*i+j] = PyFloat_AsDouble(PySequence_Fast_GET_ITEM(elem, j));
     }
   }
   
   return Py_BuildValue("");
 }
 
+
 static PyObject *
-triangulate_GET_ATTRIBUTES(PyObject *self, PyObject *args) {
+triangulate_SET_TRIANGLE_ATTRIBUTES(PyObject *self, PyObject *args) {
+  PyObject *address, *atts, *elem;
+  struct triangulateio *object;
+  int ntri, natts, i, j;
+
+  if(!PyArg_ParseTuple(args,(char *)"OO", 
+               &address, &atts)) { 
+    return NULL;
+  }
+  if(!PyCapsule_CheckExact(address)) {
+    sprintf(MSG, "ERROR in %s at line %d: wrong argument #1 (triangulateio handle required)\n", __FILE__, __LINE__);
+    PyErr_SetString(PyExc_TypeError, MSG);
+    return NULL;
+  }    
+  if(!PySequence_Check(atts)) {
+    sprintf(MSG, "ERROR in %s at line %d: wrong argument #2 ([(a0, ...),...] required)\n", __FILE__, __LINE__);
+    PyErr_SetString(PyExc_TypeError, MSG);
+    return NULL;
+  }
+  object = PyCapsule_GetPointer(address, TRIANGULATEIO_NAME);  
+
+  ntri  = PySequence_Length(atts);
+  if(ntri != object->numberoftriangles) {
+    sprintf(MSG, "ERROR in %s at line %d: wrong number of attributes (%d != %d)\n", __FILE__, __LINE__, ntri, object->numberoftriangles);
+    PyErr_SetString(PyExc_RuntimeError, MSG);
+    return NULL;
+  }
+
+  /* assume number of atts to be the same for all points! */
+  natts = 0;
+  if(ntri > 0) {
+    natts = PySequence_Length( PySequence_Fast_GET_ITEM(atts, 0) );
+  }    
+  object->numberoftriangleattributes = natts;
+
+  if(object->triangleattributelist) free(object->triangleattributelist);
+  object->triangleattributelist = malloc(natts * ntri * sizeof(REAL));
+
+  for(i = 0; i < ntri; ++i) {
+    elem = PySequence_Fast_GET_ITEM(atts, i);
+    for(j = 0; j < natts; ++j) {
+      object->triangleattributelist[natts*i + j] = PyFloat_AsDouble(PySequence_Fast_GET_ITEM(elem, j));
+    }
+  }
+  
+  return Py_BuildValue("");
+}
+
+
+static PyObject *
+triangulate_GET_POINT_ATTRIBUTES(PyObject *self, PyObject *args) {
   PyObject *address, *elem, *val, *result;
   struct triangulateio *object;
   int npts, natts, i, j;
@@ -206,28 +260,60 @@ triangulate_GET_ATTRIBUTES(PyObject *self, PyObject *args) {
     return NULL;
   }
   if(!PyCapsule_CheckExact(address)) {
-    PyErr_SetString(PyExc_TypeError,
-      "Wrong 1st argument! triangulateio handle required.");
+    sprintf(MSG, "ERROR in %s at line %d: wrong argument #1 (triangulateio handle required)\n", __FILE__, __LINE__);
+    PyErr_SetString(PyExc_TypeError, MSG);
     return NULL;
   }    
   object = PyCapsule_GetPointer(address, TRIANGULATEIO_NAME);
 
-  result = PyList_New(object->numberofpoints);
   npts   = object->numberofpoints;
+  result = PyList_New(npts);
   natts  = object->numberofpointattributes;
   for(i = 0; i < npts; ++i) {
     elem = PyTuple_New(natts);
     for(j = 0; j < natts; ++j) {
       val = PyFloat_FromDouble(object->pointattributelist[natts*i+j]);
       PyTuple_SET_ITEM(elem, j, val);
-      /* Py_DECREF(val); */
     }
     PyList_SET_ITEM(result, i, elem);
-    /* Py_DECREF(elem); */
   }
 
   return result;
 }
+
+
+static PyObject *
+triangulate_GET_TRIANGLE_ATTRIBUTES(PyObject *self, PyObject *args) {
+  PyObject *address, *elem, *val, *result;
+  struct triangulateio *object;
+  int ntri, natts, i, j;
+
+  if(!PyArg_ParseTuple(args,(char *)"O", 
+               &address)) { 
+    return NULL;
+  }
+  if(!PyCapsule_CheckExact(address)) {
+    sprintf(MSG, "ERROR in %s at line %d: wrong argument #1 (triangulateio handle required)\n", __FILE__, __LINE__);
+    PyErr_SetString(PyExc_TypeError, MSG);
+    return NULL;
+  }    
+  object = PyCapsule_GetPointer(address, TRIANGULATEIO_NAME);
+
+  ntri = object->numberoftriangles;
+  result = PyList_New(ntri);
+  natts  = object->numberoftriangleattributes;
+  for(i = 0; i < ntri; ++i) {
+    elem = PyTuple_New(natts);
+    for(j = 0; j < natts; ++j) {
+      val = PyFloat_FromDouble(object->triangleattributelist[natts*i + j]);
+      PyTuple_SET_ITEM(elem, j, val);
+    }
+    PyList_SET_ITEM(result, i, elem);
+  }
+
+  return result;
+}
+
 
 static PyObject *
 triangulate_SET_SEGMENTS(PyObject *self, PyObject *args) {
@@ -240,13 +326,13 @@ triangulate_SET_SEGMENTS(PyObject *self, PyObject *args) {
     return NULL;
   }
   if(!PyCapsule_CheckExact(address)) {
-    PyErr_SetString(PyExc_TypeError,
-      "Wrong 1st argument! triangulateio handle required.");
+    sprintf(MSG, "ERROR in %s at line %d: wrong argument #1 (triangulateio handle required)\n", __FILE__, __LINE__);
+    PyErr_SetString(PyExc_TypeError, MSG);
     return NULL;
   }    
   if(!PySequence_Check(segs)) {
-    PyErr_SetString(PyExc_TypeError,
-      "Wrong 2nd argument! Sequence required (segs).");
+    sprintf(MSG, "ERROR in %s at line %d: wrong argument #2 ([(ia, ib),...] required)\n", __FILE__, __LINE__);
+    PyErr_SetString(PyExc_TypeError, MSG);
     return NULL;
   }
   object = PyCapsule_GetPointer(address, TRIANGULATEIO_NAME);  
@@ -277,13 +363,13 @@ triangulate_SET_HOLES(PyObject *self, PyObject *args) {
     return NULL;
   }
   if(!PyCapsule_CheckExact(address)) {
-    PyErr_SetString(PyExc_TypeError,
-      "Wrong 1st argument! triangulateio handle required.");
+    sprintf(MSG, "ERROR in %s at line %d: wrong argument #1 (triangulateio handle required)\n", __FILE__, __LINE__);
+    PyErr_SetString(PyExc_TypeError, MSG);
     return NULL;
   }    
   if(!PySequence_Check(xy)) {
-    PyErr_SetString(PyExc_TypeError,
-      "Wrong 2nd argument! Sequence required (xy).");
+    sprintf(MSG, "ERROR in %s at line %d: wrong argument #2 ([(x, y),...] required)\n", __FILE__, __LINE__);
+    PyErr_SetString(PyExc_TypeError, MSG);
     return NULL;
   }
   object = PyCapsule_GetPointer(address, TRIANGULATEIO_NAME);
@@ -315,18 +401,18 @@ triangulate_TRIANGULATE(PyObject *self, PyObject *args) {
     return NULL;
   }
   if(!PyCapsule_CheckExact(address_in)) {
-    PyErr_SetString(PyExc_TypeError,
-      "Wrong 2nd argument! input triangulateio handle required.");
+    sprintf(MSG, "ERROR in %s at line %d: wrong argument #2 (input triangulateio handle required)\n", __FILE__, __LINE__);
+    PyErr_SetString(PyExc_TypeError, MSG);
     return NULL;
   }    
   if(!PyCapsule_CheckExact(address_out)) {
-    PyErr_SetString(PyExc_TypeError,
-      "Wrong 3rd argument! output triangulateio handle required.");
+    sprintf(MSG, "ERROR in %s at line %d: wrong argument #3 (output triangulateio handle required)\n", __FILE__, __LINE__);
+    PyErr_SetString(PyExc_TypeError, MSG);
     return NULL;
   }    
   if(!PyCapsule_CheckExact(address_vor)) {
-    PyErr_SetString(PyExc_TypeError,
-      "Wrong 4th argument! voronoi triangulateio handle required.");
+    sprintf(MSG, "ERROR in %s at line %d: wrong argument #4 (Voronoi handle required)\n", __FILE__, __LINE__);
+    PyErr_SetString(PyExc_TypeError, MSG);
     return NULL;
   }    
   object_in  = PyCapsule_GetPointer(address_in,  TRIANGULATEIO_NAME);
@@ -357,7 +443,7 @@ triangulate_TRIANGULATE(PyObject *self, PyObject *args) {
 }
 
 static PyObject *
-triangulate_GET_NUM_NODES(PyObject *self, PyObject *args) {
+triangulate_GET_NUM_POINTS(PyObject *self, PyObject *args) {
   PyObject *address;
   struct triangulateio *object;
   int n;
@@ -367,8 +453,8 @@ triangulate_GET_NUM_NODES(PyObject *self, PyObject *args) {
     return NULL;
   }
   if(!PyCapsule_CheckExact(address)) {
-    PyErr_SetString(PyExc_TypeError,
-            "Wrong argument! triangulateio handle required.");
+    sprintf(MSG, "ERROR in %s at line %d: wrong argument (triangulateio handle required)\n", __FILE__, __LINE__);
+    PyErr_SetString(PyExc_TypeError, MSG);
     return NULL;
   }
   object = PyCapsule_GetPointer(address, TRIANGULATEIO_NAME);
@@ -388,8 +474,8 @@ triangulate_GET_NUM_TRIANGLES(PyObject *self, PyObject *args) {
     return NULL;
   }
   if(!PyCapsule_CheckExact(address)) {
-    PyErr_SetString(PyExc_TypeError,
-            "Wrong argument! triangulateio handle required.");
+    sprintf(MSG, "ERROR in %s at line %d: wrong argument (triangulateio handle required)\n", __FILE__, __LINE__);
+    PyErr_SetString(PyExc_TypeError, MSG);
     return NULL;
   }
   object = PyCapsule_GetPointer(address, TRIANGULATEIO_NAME);
@@ -399,7 +485,7 @@ triangulate_GET_NUM_TRIANGLES(PyObject *self, PyObject *args) {
 }
 
 static PyObject *
-triangulate_GET_NODES(PyObject *self, PyObject *args) {
+triangulate_GET_POINTS(PyObject *self, PyObject *args) {
 
   /* Return a [ [(x,y), marker],..] */
 
@@ -413,8 +499,8 @@ triangulate_GET_NODES(PyObject *self, PyObject *args) {
     return NULL;
   }
   if(!PyCapsule_CheckExact(address)) {
-    PyErr_SetString(PyExc_TypeError,
-            "Wrong argument! triangulateio handle required.");
+    sprintf(MSG, "ERROR in %s at line %d: wrong argument (triangulateio handle required)\n", __FILE__, __LINE__);
+    PyErr_SetString(PyExc_TypeError, MSG);
     return NULL;
   }
   object = PyCapsule_GetPointer(address, TRIANGULATEIO_NAME);
@@ -443,8 +529,8 @@ triangulate_GET_EDGES(PyObject *self, PyObject *args) {
     return NULL;
   }
   if (!PyCapsule_CheckExact(address)) {
-    PyErr_SetString(PyExc_TypeError,
-            "Wrong argument! triangulateio handle required.");
+    sprintf(MSG, "ERROR in %s at line %d: wrong argument (triangulateio handle required)\n", __FILE__, __LINE__);
+    PyErr_SetString(PyExc_TypeError, MSG);
     return NULL;
   }
   object = PyCapsule_GetPointer(address, TRIANGULATEIO_NAME);
@@ -464,7 +550,7 @@ triangulate_GET_EDGES(PyObject *self, PyObject *args) {
 
 static PyObject *
 triangulate_GET_TRIANGLES(PyObject *self, PyObject *args) {
-  PyObject *address, *holder, *nodes, *kk, *atts, *aa, *elem, *neigh, *mm;
+  PyObject *address, *holder, *points, *kk, *atts, *aa, *elem, *neigh, *mm;
   struct triangulateio *object;
   int i, j, k, m, nc, na, nt;
   REAL a;
@@ -474,8 +560,8 @@ triangulate_GET_TRIANGLES(PyObject *self, PyObject *args) {
     return NULL;
   }
   if(!PyCapsule_CheckExact(address)) {
-    PyErr_SetString(PyExc_TypeError,
-            "Wrong argument! triangulateio handle required.");
+    sprintf(MSG, "ERROR in %s at line %d: wrong argument (triangulateio handle required)\n", __FILE__, __LINE__);
+    PyErr_SetString(PyExc_TypeError, MSG);
     return NULL;
   }
   object = PyCapsule_GetPointer(address, TRIANGULATEIO_NAME);
@@ -490,13 +576,13 @@ triangulate_GET_TRIANGLES(PyObject *self, PyObject *args) {
   na = object->numberoftriangleattributes;
 
   for(i = 0; i < object->numberoftriangles; ++i) {
-    nodes = PyList_New(nc);
+    points = PyList_New(nc);
     neigh = PyTuple_New(nt);
     atts  = PyList_New(na);
     for(j = 0; j < nc; ++j) {
       k = object->trianglelist[nc*i+j];
       kk = PyLong_FromLong((long) k);
-      PyList_SET_ITEM(nodes, j, kk);
+      PyList_SET_ITEM(points, j, kk);
     }
     for(j = 0; j < nt; ++j) {
       m = object->neighborlist[nt*i+j];
@@ -509,7 +595,7 @@ triangulate_GET_TRIANGLES(PyObject *self, PyObject *args) {
       PyList_SET_ITEM(atts, j, aa);
     }
     elem = PyTuple_New(3);
-    PyTuple_SET_ITEM(elem, 0, nodes);
+    PyTuple_SET_ITEM(elem, 0, points);
     PyTuple_SET_ITEM(elem, 1, neigh);
     PyTuple_SET_ITEM(elem, 2, atts );
     PyList_SET_ITEM(holder, i, elem);
@@ -521,27 +607,31 @@ triangulate_GET_TRIANGLES(PyObject *self, PyObject *args) {
 static PyMethodDef triangulate_methods[] = {
   {"new", triangulate_NEW, METH_VARARGS, "Return new handle to triangulateio structure ()->h."},
   {"set_points", triangulate_SET_POINTS, METH_VARARGS, 
-   "Set points and markers (h, [(x1,y1),(x2,y2)..], [m1,m2..])->None. \nh: handle.\n[(x1,y1),(x2,y2)..]: coordinates.\n[m1,m2,..]: node markers (1 per node)."},
-  {"set_attributes", triangulate_SET_ATTRIBUTES, METH_VARARGS, 
-   "Set node attributes (h, [(a1,a2,..),..])->None. \nh: handle.\n[(a1,a2,..),..]: atributes (a1,a2,..)."},
-  {"get_attributes", triangulate_GET_ATTRIBUTES, METH_VARARGS, 
-   "Get node attributes (h)->[(a1,a2,..),..]. \nh: handle."},
+   "Set points and markers (h, [(x1,y1),(x2,y2)..], [m1,m2..])->None. \nh: handle.\n[(x1,y1),(x2,y2)..]: coordinates.\n[m1,m2,..]: point markers (1 per point)."},
+  {"set_point_attributes", triangulate_SET_POINT_ATTRIBUTES, METH_VARARGS, 
+   "Set point attributes (h, [(a1,a2,..),..])->None. \nh: handle.\n[(a1,a2,..),..]: atributes (a1,a2,..)."},
+  {"set_triangle_attributes", triangulate_SET_TRIANGLE_ATTRIBUTES, METH_VARARGS, 
+   "Set triangle attributes (h, [(a1,a2,..),..])->None. \nh: handle.\n[(a1,a2,..),..]: atributes (a1,a2,..)."},
+  {"get_point_attributes", triangulate_GET_POINT_ATTRIBUTES, METH_VARARGS, 
+   "Get point attributes (h)->[(a1,a2,..),..]. \nh: handle."},
+  {"get_triangle_attributes", triangulate_GET_TRIANGLE_ATTRIBUTES, METH_VARARGS, 
+   "Get triangle attributes (h)->[(a1,a2,..),..]. \nh: handle."},
   {"set_segments", triangulate_SET_SEGMENTS, METH_VARARGS, 
    "Set segments (h, [(i,j),..])->None. \nh: handle.\n[(i,j),..]: segments."},
   {"set_holes", triangulate_SET_HOLES, METH_VARARGS, 
    "Set holes (h, [(x1,y1),(x2,y2),..])->None. \nh: handle.\n[(x1,y1),(x2,y2),..]: hole coordinates."},
   {"triangulate", triangulate_TRIANGULATE, METH_VARARGS, 
    "Triangulate or refine an existing triangulation (switches, h_in, h_out, h_vor)->None.\nswitches: a string (see Triangle doc).\nh_in, h_out, h_vor: handles to the input, output and Voronoi triangulateio structs."},
-  {"get_num_nodes", triangulate_GET_NUM_NODES, METH_VARARGS, 
-   "Return number of nodes."},
+  {"get_num_points", triangulate_GET_NUM_POINTS, METH_VARARGS, 
+   "Return number of points."},
   {"get_num_triangles", triangulate_GET_NUM_TRIANGLES, METH_VARARGS, 
    "Return number of triangles."},
-  {"get_nodes", triangulate_GET_NODES, METH_VARARGS, 
-   "Return node dict from handle (h)->{i: [(x,y),[i1,i2,..], m],..}.\nh: handle.\n(x,y): node coordinates.\n[i1,i2..]: neighboring node indices.\nm: node marker (0=interior, 1=boundary)."},
+  {"get_points", triangulate_GET_POINTS, METH_VARARGS, 
+   "Return dict from handle (h)->{i: [(x,y),[i1,i2,..], m],..}.\nh: handle.\n(x,y): point coordinates.\n[i1,i2..]: neighboring point indices.\nm: point marker (0=interior, 1=boundary)."},
   {"get_edges", triangulate_GET_EDGES, METH_VARARGS, 
-   "Return list of edge nodes with edge markers (h)->[((i1,i2),m),..].\nh: handle.\n(i1,i2): node indices.\nm: edge markers."},
+   "Return list of edge points with edge markers (h)->[((i1,i2),m),..].\nh: handle.\n(i1,i2): point indices.\nm: edge markers."},
   {"get_triangles", triangulate_GET_TRIANGLES, METH_VARARGS, 
-   "Return list of triangles (h)->[([i1,i2,i3,..],(k1,k2,k3), [a1,a2,..]),..].\nh: handle.\ni1,i2,i3,..: node indices at the triangle corners, optionally followed by intermediate nodes.\n(k1,k2,k3): neighboring triangle indices;\na1,a2..: triangle cell attributes."},
+   "Return list of triangles (h)->[([i1,i2,i3,..],(k1,k2,k3), [a1,a2,..]),..].\nh: handle.\ni1,i2,i3,..: point indices at the triangle corners, optionally followed by intermediate points.\n(k1,k2,k3) and neighboring triangle indices;\na1,a2..: triangle cell attributes."},
   {NULL, NULL, 0, NULL}
 };
 
@@ -570,15 +660,11 @@ inittriangulate()
 #endif
 {
 
-//Py_InitModule( "triangulate", triangulate_methods);
 
 #if PY_MAJOR_VERSION >= 3
     PyObject *module = PyModule_Create(&triangulateio_moduledef);
+    return module;
 #else
     Py_InitModule("triangulate", triangulate_methods);
-#endif
-
-#if PY_MAJOR_VERSION >= 3
-    return module;
 #endif
 }
