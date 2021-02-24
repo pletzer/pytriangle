@@ -237,7 +237,7 @@ triangulate_SET_TRIANGLE_ATTRIBUTES(PyObject *self, PyObject *args) {
 
   if(object->triangleattributelist) free(object->triangleattributelist);
   object->triangleattributelist = malloc(natts * ntri * sizeof(REAL));
-  
+
   for(i = 0; i < ntri; ++i) {
     elem = PySequence_Fast_GET_ITEM(atts, i);
     for(j = 0; j < natts; ++j) {
@@ -247,7 +247,6 @@ triangulate_SET_TRIANGLE_ATTRIBUTES(PyObject *self, PyObject *args) {
   
   return Py_BuildValue("");
 }
-
 
 
 static PyObject *
@@ -661,15 +660,11 @@ inittriangulate()
 #endif
 {
 
-//Py_InitModule( "triangulate", triangulate_methods);
 
 #if PY_MAJOR_VERSION >= 3
     PyObject *module = PyModule_Create(&triangulateio_moduledef);
+    return module;
 #else
     Py_InitModule("triangulate", triangulate_methods);
-#endif
-
-#if PY_MAJOR_VERSION >= 3
-    return module;
 #endif
 }
