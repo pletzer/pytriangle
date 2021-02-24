@@ -47,7 +47,7 @@ on these points and cells. As an example, set the attributes by calling an exter
 function func, which takes the (x, y) coordinates as argument
 ```python
 attributes = [(func(p), ...) for p in points]
-t.set_attributes(attributes) 
+t.set_point_attributes(attributes) 
 ```
 
 Triangulate the set of points, segments, and holes 
@@ -64,12 +64,12 @@ which will add triangles.
 
 The triangulation points and their connectivity can be obtained with
 ```python
-nodes = t.get_nodes()
+points = t.get_points()
 triangles = t.get_triangles()
 ```
-where nodes is in the format [[(x, y), marker], ...] where marker is 1 on the boundary 
+where points is in the format [[(x, y), marker], ...] where marker is 1 on the boundary 
 and zero inside and triangles is in the format [[(i0, i1, i2), (k0, k1, k2), [a0, a1, ...]], ...],
-i0, i1, and i2 are the node indices, k0, k1, and k2 are optional intermediate node indices, and 
+i0, i1, and i2 are the vertex indices, k0, k1, and k2 are optional intermediate node indices, and 
 a0, a1, ... are the optional attributes interpolated to cell centers. 
 
 ### Installation ###
