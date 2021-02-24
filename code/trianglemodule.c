@@ -577,7 +577,7 @@ static PyMethodDef triangulate_methods[] = {
   {"get_edges", triangulate_GET_EDGES, METH_VARARGS, 
    "Return list of edge points with edge markers (h)->[((i1,i2),m),..].\nh: handle.\n(i1,i2): point indices.\nm: edge markers."},
   {"get_triangles", triangulate_GET_TRIANGLES, METH_VARARGS, 
-   "Return list of triangles (h)->[([i1,i2,i3,..],(k1,k2,k3), [a1,a2,..]),..].\nh: handle.\ni1,i2,i3,..: point indices at the triangle corners, optionally followed by intermediate points.\n(k1,k2,k3): neighboring triangle indices;\na1,a2..: triangle cell attributes."},
+   "Return list of triangles (h)->[([i1,i2,i3,..],(k1,k2,k3), [a1,a2,..]),..].\nh: handle.\ni1,i2,i3,..: point indices at the triangle corners, optionally followed by intermediate points.\n(k1,k2,k3) and neighboring triangle indices;\na1,a2..: triangle cell attributes."},
   {NULL, NULL, 0, NULL}
 };
 
