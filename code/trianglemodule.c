@@ -177,24 +177,77 @@ triangulate_SET_POINT_ATTRIBUTES(PyObject *self, PyObject *args) {
       "Wrong number of attribute elements.");
     return NULL;
   }
+
+  natts = 0;
   /* assume number of atts to be the same for all points! */
   if(npts > 0) {
     natts = PySequence_Length( PySequence_Fast_GET_ITEM(atts, 0) );
-    if(natts != object->numberofpointattributes) {
-      if(object->pointattributelist) free(object->pointattributelist);
-      object->pointattributelist = malloc(natts * npts * sizeof(REAL));
-    }
-    object->numberofpointattributes = natts;
-    for(i = 0; i < npts; ++i) {
-      elem = PySequence_Fast_GET_ITEM(atts, i);
-      for(j = 0; j < natts; ++j) {
-        object->pointattributelist[natts*i+j] = PyFloat_AsDouble(PySequence_Fast_GET_ITEM(elem, j));
-      }
+  }
+  object->numberofpointattributes = natts;
+
+  if(object->pointattributelist) free(object->pointattributelist);
+  object->pointattributelist = malloc(natts * npts * sizeof(REAL));
+
+  for(i = 0; i < npts; ++i) {
+    elem = PySequence_Fast_GET_ITEM(atts, i);
+    for(j = 0; j < natts; ++j) {
+    object->pointattributelist[natts*i+j] = PyFloat_AsDouble(PySequence_Fast_GET_ITEM(elem, j));
     }
   }
   
   return Py_BuildValue("");
 }
+
+
+static PyObject *
+triangulate_SET_TRIANGLE_ATTRIBUTES(PyObject *self, PyObject *args) {
+  PyObject *address, *atts, *elem;
+  struct triangulateio *object;
+  int ntri, natts, i, j;
+
+  if(!PyArg_ParseTuple(args,(char *)"OO", 
+               &address, &atts)) { 
+    return NULL;
+  }
+  if(!PyCapsule_CheckExact(address)) {
+    sprintf(MSG, "ERROR in %s at line %d: wrong argument #1 (triangulateio handle required)\n", __FILE__, __LINE__);
+    PyErr_SetString(PyExc_TypeError, MSG);
+    return NULL;
+  }    
+  if(!PySequence_Check(atts)) {
+    sprintf(MSG, "ERROR in %s at line %d: wrong argument #2 ([(a0, ...),...] required)\n", __FILE__, __LINE__);
+    PyErr_SetString(PyExc_TypeError, MSG);
+    return NULL;
+  }
+  object = PyCapsule_GetPointer(address, TRIANGULATEIO_NAME);  
+
+  ntri  = PySequence_Length(atts);
+  if(ntri != object->numberoftriangles) {
+    sprintf(MSG, "ERROR in %s at line %d: wrong number of attributes (%d != %d)\n", __FILE__, __LINE__, ntri, object->numberoftriangles);
+    PyErr_SetString(PyExc_RuntimeError, MSG);
+    return NULL;
+  }
+
+  /* assume number of atts to be the same for all points! */
+  natts = 0;
+  if(ntri > 0) {
+    natts = PySequence_Length( PySequence_Fast_GET_ITEM(atts, 0) );
+  }    
+  object->numberoftriangleattributes = natts;
+
+  if(object->triangleattributelist) free(object->triangleattributelist);
+  object->triangleattributelist = malloc(natts * ntri * sizeof(REAL));
+  
+  for(i = 0; i < ntri; ++i) {
+    elem = PySequence_Fast_GET_ITEM(atts, i);
+    for(j = 0; j < natts; ++j) {
+      object->triangleattributelist[natts*i + j] = PyFloat_AsDouble(PySequence_Fast_GET_ITEM(elem, j));
+    }
+  }
+  
+  return Py_BuildValue("");
+}
+
 
 
 static PyObject *
@@ -558,6 +611,8 @@ static PyMethodDef triangulate_methods[] = {
    "Set points and markers (h, [(x1,y1),(x2,y2)..], [m1,m2..])->None. \nh: handle.\n[(x1,y1),(x2,y2)..]: coordinates.\n[m1,m2,..]: point markers (1 per point)."},
   {"set_point_attributes", triangulate_SET_POINT_ATTRIBUTES, METH_VARARGS, 
    "Set point attributes (h, [(a1,a2,..),..])->None. \nh: handle.\n[(a1,a2,..),..]: atributes (a1,a2,..)."},
+  {"set_triangle_attributes", triangulate_SET_TRIANGLE_ATTRIBUTES, METH_VARARGS, 
+   "Set triangle attributes (h, [(a1,a2,..),..])->None. \nh: handle.\n[(a1,a2,..),..]: atributes (a1,a2,..)."},
   {"get_point_attributes", triangulate_GET_POINT_ATTRIBUTES, METH_VARARGS, 
    "Get point attributes (h)->[(a1,a2,..),..]. \nh: handle."},
   {"get_triangle_attributes", triangulate_GET_TRIANGLE_ATTRIBUTES, METH_VARARGS, 

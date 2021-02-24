@@ -99,6 +99,8 @@ class TestTriangle(unittest.TestCase):
         t.triangulate(area=0.01)
         print('number of points/triangles before refinement: %d/%d' % \
                                (t.get_num_points(), t.get_num_triangles()))
+
+        #t.set_triangle_attributes([(float(i), float(i)**2) for i in range(t.get_num_triangles())])
         
         # refine multiple times the triangulation
         for i in range(10):
@@ -112,7 +114,7 @@ class TestTriangle(unittest.TestCase):
         points = t.get_points(level=-1)
         attributes = t.get_point_attributes(level=-1)
 
-        # checking backwards compatibility
+        # checking backwards compatibility for pooint attributes
         attributes = t.get_attributes(level=-1)
         
         # compute the interpolation error
