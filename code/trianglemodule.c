@@ -390,6 +390,45 @@ triangulate_SET_HOLES(PyObject *self, PyObject *args) {
 }
 
 static PyObject *
+triangulate_SET_REGIONS(PyObject *self, PyObject *args) {
+  PyObject *address, *xy, *elem;
+  struct triangulateio *object;
+  int nr, i;
+
+  if(!PyArg_ParseTuple(args,(char *)"OO", 
+               &address, &xy)) { 
+    return NULL;
+  }
+  if(!PyCapsule_CheckExact(address)) {
+    sprintf(MSG, "ERROR in %s at line %d: wrong argument #1 (triangulateio handle required)\n", __FILE__, __LINE__);
+    PyErr_SetString(PyExc_TypeError, MSG);
+    return NULL;
+  }    
+  if(!PySequence_Check(xy)) {
+    sprintf(MSG, "ERROR in %s at line %d: wrong argument #2 ([(x, y, r ,a),...] required)\n", __FILE__, __LINE__);
+    PyErr_SetString(PyExc_TypeError, MSG);
+    return NULL;
+  }
+  object = PyCapsule_GetPointer(address, TRIANGULATEIO_NAME);
+
+  nr = PySequence_Length(xy);
+  if(nr != object->numberofregions) {
+    if(object->regionlist) free(object->regionlist);
+    object->regionlist = malloc(nr * 4 * sizeof(REAL));
+  }
+  object->numberofregions = nr;
+  for(i = 0; i < nr; ++i) {
+    elem = PySequence_Fast_GET_ITEM(xy, i);
+    object->regionlist[4*i  ] = PyFloat_AsDouble(PySequence_Fast_GET_ITEM(elem, 0));
+    object->regionlist[4*i+1] = PyFloat_AsDouble(PySequence_Fast_GET_ITEM(elem, 1));
+    object->regionlist[4*i+2] = PyFloat_AsDouble(PySequence_Fast_GET_ITEM(elem, 2));
+    object->regionlist[4*i+3] = PyFloat_AsDouble(PySequence_Fast_GET_ITEM(elem, 3));
+  }
+
+  return Py_BuildValue("");
+}
+
+static PyObject *
 triangulate_TRIANGULATE(PyObject *self, PyObject *args) {
   PyObject *address_in, *address_out, *address_vor;
   struct triangulateio *object_in, *object_out, *object_vor;
@@ -430,11 +469,12 @@ triangulate_TRIANGULATE(PyObject *self, PyObject *args) {
   for(i = 0; i < 2*object_in->numberofholes; ++i) {
     object_out->holelist[i] = object_in->holelist[i];
   }
+  
   object_out->regionlist = NULL;
   if(object_in->numberofregions > 0) {
-    /* x, y, region_attribute, max_area, four_area_constraints */
-    object_out->regionlist = malloc((_NDIM+2+4) * object_in->numberofregions * sizeof(REAL));
-    for(i = 0; i < (_NDIM+2+4)*object_in->numberofregions; ++i) {
+    /* x, y, region_attribute, max_area */
+    object_out->regionlist = malloc(4 * object_in->numberofregions * sizeof(REAL));
+    for(i = 0; i < 4 * object_in->numberofregions; ++i) {
       object_out->regionlist[i] = object_in->regionlist[i];
     }
   }
@@ -620,6 +660,8 @@ static PyMethodDef triangulate_methods[] = {
    "Set segments (h, [(i,j),..])->None. \nh: handle.\n[(i,j),..]: segments."},
   {"set_holes", triangulate_SET_HOLES, METH_VARARGS, 
    "Set holes (h, [(x1,y1),(x2,y2),..])->None. \nh: handle.\n[(x1,y1),(x2,y2),..]: hole coordinates."},
+  {"set_regions", triangulate_SET_REGIONS, METH_VARARGS, 
+   "Set regions (h, [(x1,y1,r1,a1),(x2,y2,r2,a2),..])->None. \nh: handle.\n[(x1,y1,r1,a1),(x2,y2,r2,a2),..]: region tag coordinates, id and area constraint."},
   {"triangulate", triangulate_TRIANGULATE, METH_VARARGS, 
    "Triangulate or refine an existing triangulation (switches, h_in, h_out, h_vor)->None.\nswitches: a string (see Triangle doc).\nh_in, h_out, h_vor: handles to the input, output and Voronoi triangulateio structs."},
   {"get_num_points", triangulate_GET_NUM_POINTS, METH_VARARGS, 
