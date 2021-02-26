@@ -8,12 +8,10 @@ pointBoundary =  [ (-1, -1),
                    ( 0, -1),
                    ( 1,  1),
                    ( 1, -3)]
-pointInner = [(0.5,0.5)]
 
-points = pointBoundary# + pointInner
+points = pointBoundary
 
-#segs = [(i, (i + 1) % len(pointBoundary)) for i in range(len(pointBoundary))]
-segs = [(0, 1),(1,2),(2,3),(3,0), (2,4), (4,5),(5,3)]
+segs = [(0, 1),(1, 2),(2, 3),(3, 0), (2, 4), (4, 5), (5, 3)]
 
 t = triangle.Triangle()
 t.set_points(points)
@@ -24,8 +22,8 @@ t.set_segments(segs)
 # the fourth parmaters 'a'
 # regions = [(x,y,r,a),...]
 
-regions = [ (-0.5, 0.5,10,0.1),
-            (0.5, 0.5,20,0.5)]
+regions = [ (-0.5, 0.5, 10, 0.1),
+            (0.5, 0.5, 20, 0.5)]
 
 
 t.set_regions(regions)
