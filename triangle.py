@@ -80,6 +80,17 @@ class Triangle:
         """
         triangulate.set_holes(self.hndls[0], xy)
 
+    def set_regions(self, xy):
+
+        """
+        Set the list of regions. 
+
+        @param xy [ (x0, y0, r, a), ... ] where (x0,y0) is a point inside a region
+                                                r is the region attribute (tag)
+                                                a is the area constraint
+        """
+        triangulate.set_regions(self.hndls[0], xy)
+
 
     def set_point_attributes(self, att):
 
@@ -256,7 +267,51 @@ class Triangle:
     get_attributes = get_point_attributes
         
         
-
+    # add some visualization capability to fast check the mesh
+    
+    
+    def plot_mesh(self,level=-1):
+        import matplotlib.pyplot as plt
+        from matplotlib.path import Path
+        import matplotlib.patches as patches
         
+        mesh = self.get_triangles(level)
+        points = self.get_points(level)
+        verts = []
+        codes = []
+ 
+        fig, ax = plt.subplots()
+        
+        for _t in mesh:
+            #([n1, n2, n3], (), [regiona_tag])
+            p = _t[0]
+            x1,y1 = points[p[0]][0]
+            x2,y2 = points[p[1]][0]
+            x3,y3 = points[p[2]][0]
 
+            verts.append((x1, y1))
+            verts.append((x2, y2))
+            verts.append((x3, y3))
+            verts.append((x1, y1))
+            codes.append(Path.MOVETO)
+            codes.append(Path.LINETO)
+            codes.append(Path.LINETO)
+            codes.append(Path.CLOSEPOLY)
+            
+            ax.text((x1+x2+x3)/3, (y1+y2+y3)/3, str(_t[2]))
+        
+        path = Path(verts, codes)
+
+        patch = patches.PathPatch(path, facecolor='None', lw=1)
+        ax.add_patch(patch)
+        ax.margins(0.05)
+        ax.axis('equal')
+
+        return plt
+    
+
+
+
+    
+    
     
