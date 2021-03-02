@@ -317,12 +317,12 @@ triangulate_GET_TRIANGLE_ATTRIBUTES(PyObject *self, PyObject *args) {
 
 static PyObject *
 triangulate_SET_SEGMENTS(PyObject *self, PyObject *args) {
-  PyObject *address, *segs, *elem;
+  PyObject *address, *segs, *elem, *marks, *tag;
   struct triangulateio *object;
   int ns, i;
 
-  if(!PyArg_ParseTuple(args,(char *)"OO", 
-               &address, &segs)) { 
+  if(!PyArg_ParseTuple(args,(char *)"OOO", 
+               &address, &segs, &marks)) { 
     return NULL;
   }
   if(!PyCapsule_CheckExact(address)) {
@@ -335,18 +335,26 @@ triangulate_SET_SEGMENTS(PyObject *self, PyObject *args) {
     PyErr_SetString(PyExc_TypeError, MSG);
     return NULL;
   }
+  if(!PySequence_Check(marks)) {
+    sprintf(MSG, "ERROR in %s at line %d: wrong argument #3 ([m1,m2,...] required)\n", __FILE__, __LINE__);
+    PyErr_SetString(PyExc_TypeError, MSG);
+    return NULL;
+  }
   object = PyCapsule_GetPointer(address, TRIANGULATEIO_NAME);  
 
   ns = PySequence_Length(segs);
   if(ns != object->numberofsegments) {
     if(object->segmentlist) free(object->segmentlist);
-    object->segmentlist = malloc(_NDIM * object->numberofpoints * sizeof(int));
+    object->segmentlist = malloc(_NDIM * ns * sizeof(int));
+    object->segmentmarkerlist = malloc( ns * sizeof(int));
   }
   object->numberofsegments = ns;
   for(i = 0; i < ns; ++i) {
     elem = PySequence_Fast_GET_ITEM(segs, i);
+    tag = PySequence_Fast_GET_ITEM(marks, i);
     object->segmentlist[_NDIM*i  ] = (int) PyLong_AsLong(PySequence_Fast_GET_ITEM(elem,0));
     object->segmentlist[_NDIM*i+1] = (int) PyLong_AsLong(PySequence_Fast_GET_ITEM(elem,1));
+    object->segmentmarkerlist[i]   = (int) PyLong_AsLong(PyNumber_Long(tag));
   }
 
   return Py_BuildValue("");
@@ -578,8 +586,8 @@ triangulate_GET_EDGES(PyObject *self, PyObject *args) {
   holder = PyList_New(object->numberofedges);
 
   for (i = 0; i < object->numberofedges; ++i) {
-    i1 = object->edgelist[2*i  ];
-    i2 = object->edgelist[2*i+1];
+    i1 = object->edgelist[_NDIM*i  ];
+    i2 = object->edgelist[_NDIM*i+1];
     m  = object->edgemarkerlist[i];
     i1_i2_m = Py_BuildValue("((i,i),i)", i1, i2, m);
     PyList_SET_ITEM(holder, i, i1_i2_m);
