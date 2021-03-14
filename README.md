@@ -84,6 +84,10 @@ Alternatively, you can also install pytriangle with pip
 pip install pytriangle
 ```
 
+## Contributors ##
+
+Alexander Pletzer, Luigi Alberti
+
 ### Support ###
 
 Send bug reports and comments to alexander _at_ gokliya _dot_ net
