@@ -57,20 +57,35 @@ class Triangle:
         self.has_points = True
 
 
-    def set_segments(self, segs):
+    def set_segments(self, segs, markers=[]):
 
         """
         Set the boundary contour. 
 
         @param segs [(p0, p1), ....] where p0 and p1 are point indices. The ordering is counterclockwise for an outer boundary
                     and clockwise for an internal boundary.
+               markers [m1,m2,...] optional markers to assign physical tags to segments
 
         @note invoke this method after 'set_points'.
         """
-        triangulate.set_segments(self.hndls[0], segs)
+        
+        if not markers:
+            # set all the markers to zero
+            mrks = [0 for i in range(len(segs))]
+        else:
+            nseg = len(segs)
+            nmrk = len(markers)
+            if nseg != nmrk:
+                print('%s: Warning. Incompatible size between marker and segment lists len(segs)=%d != len(markers)=%d.' % \
+                      (__file__, nseg, nmrk))
+                n1 = min(nseg, nmrk)
+                n2 = nseg - nmrk
+                mrks = [markers[i] for i in range(n1)] + [0 for i in range(n2)]
+            else:
+                mrks = markers
+        triangulate.set_segments(self.hndls[0], segs, mrks)
         self.has_sgmts = True
         
-
     def set_holes(self, xy):
 
         """
@@ -277,6 +292,7 @@ class Triangle:
         
         mesh = self.get_triangles(level)
         points = self.get_points(level)
+
         verts = []
         codes = []
  
