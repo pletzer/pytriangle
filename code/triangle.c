@@ -15717,7 +15717,10 @@ char **argv;
   m.steinerleft = b.steiner;
 
 #ifdef TRILIBRARY
-  printf("^^^ 1\n");
+  printf("^^^ 1 number of points = %d\n", in->numberofpoints);
+  for (int i = 0; i < in->numberofpoints; ++i) {
+  	printf("^^^^point %d %lf, %lf\n", i, in->pointlist[2*i + 0], in->pointlist[2*i + 1]);
+  }
   transfernodes(&m, &b, in->pointlist, in->pointattributelist,
                 in->pointmarkerlist, in->numberofpoints,
                 in->numberofpointattributes);
@@ -15992,6 +15995,7 @@ printf("^^^ 1\n");
   }
   if (b.voronoi) {
 #ifdef TRILIBRARY
+  	printf("^^^ 29\n");
     writevoronoi(&m, &b, &vorout->pointlist, &vorout->pointattributelist,
                  &vorout->pointmarkerlist, &vorout->edgelist,
                  &vorout->edgemarkerlist, &vorout->normlist);
@@ -16001,6 +16005,7 @@ printf("^^^ 1\n");
   }
   if (b.neighbors) {
 #ifdef TRILIBRARY
+  	printf("^^^ 30\n");
     writeneighbors(&m, &b, &out->neighborlist);
 #else /* not TRILIBRARY */
     writeneighbors(&m, &b, b.neighborfilename, argc, argv);
@@ -16017,19 +16022,22 @@ printf("^^^ 1\n");
            1000l * (tv6.tv_sec - tv0.tv_sec) +
            (tv6.tv_usec - tv0.tv_usec) / 1000l);
 #endif /* not NO_TIMER */
-
+    printf("^^^ 31\n");
     statistics(&m, &b);
   }
 
 #ifndef REDUCED
   if (b.docheck) {
+  	printf("^^^ 32\n");
     checkmesh(&m, &b);
     checkdelaunay(&m, &b);
   }
 #endif /* not REDUCED */
 
+  printf("^^^ 33\n");
   triangledeinit(&m, &b);
 #ifndef TRILIBRARY
+  printf("^^^ 34 done!\n");
   return 0;
 #endif /* not TRILIBRARY */
 }
