@@ -42,6 +42,16 @@ class TestTriangle(unittest.TestCase):
         print('number of points/triangles: %d/%d' % 
             (t.get_num_points(), t.get_num_triangles()))
 
+    def test_simple2(self):
+
+        # a single triangle
+        t = triangle.Triangle()
+        pts = [(0.,0.), (1.,0.), (1., 2.)]
+        seg = [(0,1), (1,2), (2,3)]
+        t.triangulate(area=0.01, mode='pzq27eQ')
+        print('number of points/triangles: %d/%d' % 
+            (t.get_num_points(), t.get_num_triangles()))
+
     
     def test_circle_with_hole(self):
         
