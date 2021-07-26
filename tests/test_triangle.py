@@ -47,7 +47,7 @@ class TestTriangle(unittest.TestCase):
         # a single triangle
         t = triangle.Triangle()
         pts = [(0.,0.), (1.,0.), (1., 2.)]
-        seg = [(0,1), (1,2), (2,3)]
+        seg = [(0,1), (1,2), (2,0)]
         t.set_points(pts)
         t.set_segments(seg)
         t.triangulate(area=0.01, mode='pzq27eQ')

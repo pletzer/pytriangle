@@ -358,6 +358,7 @@ triangulate_SET_SEGMENTS(PyObject *self, PyObject *args) {
     object->segmentmarkerlist[i]   = (int) PyLong_AsLong(PyNumber_Long(tag));
   }
 
+  printf("+++ returning from set_segments\n");
   return Py_BuildValue("");
 }
 
@@ -444,6 +445,7 @@ triangulate_TRIANGULATE(PyObject *self, PyObject *args) {
   char *swtch;
   int i;
 
+  printf("*** 1\n");
   if(!PyArg_ParseTuple(args,(char *)"sOOO",
                &swtch, &address_in, &address_out, &address_vor)) {
     return NULL;
@@ -462,12 +464,16 @@ triangulate_TRIANGULATE(PyObject *self, PyObject *args) {
     snprintf(MSG, MSG_SIZE, "ERROR in %s at line %d: wrong argument #4 (Voronoi handle required)\n", __FILE__, __LINE__);
     PyErr_SetString(PyExc_TypeError, MSG);
     return NULL;
-  }    
+  }
+  printf("*** 2\n");
+  
   object_in  = (struct triangulateio *) PyCapsule_GetPointer(address_in,  TRIANGULATEIO_NAME);
   object_out = (struct triangulateio *) PyCapsule_GetPointer(address_out, TRIANGULATEIO_NAME);
   object_vor = (struct triangulateio *) PyCapsule_GetPointer(address_vor, TRIANGULATEIO_NAME);
+  printf("*** 3 swtch = %s object_in = %x object_out = %x object_vor = %x\n", swtch, object_in, object_out, object_vor);
 
   triangulate(swtch, object_in, object_out, object_vor);
+  printf("*** 4\n");
 
   /* Copy holelist and regionlist. These are input only with the pointer
      sharing the address of the input struct. By copying these, we
@@ -478,6 +484,7 @@ triangulate_TRIANGULATE(PyObject *self, PyObject *args) {
   for(i = 0; i < 2*object_in->numberofholes; ++i) {
     object_out->holelist[i] = object_in->holelist[i];
   }
+  printf("*** 5\n");
   
   object_out->regionlist = NULL;
   if(object_in->numberofregions > 0) {
@@ -487,6 +494,7 @@ triangulate_TRIANGULATE(PyObject *self, PyObject *args) {
       object_out->regionlist[i] = object_in->regionlist[i];
     }
   }
+  printf("*** 6\n");
 
   return Py_BuildValue("");
 }

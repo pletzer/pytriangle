@@ -15707,6 +15707,7 @@ char **argv;
   gettimeofday(&tv0, &tz);
 #endif /* not NO_TIMER */
 
+  printf("^^^ 0\n");
   triangleinit(&m);
 #ifdef TRILIBRARY
   parsecommandline(1, &triswitches, &b);
@@ -15716,9 +15717,11 @@ char **argv;
   m.steinerleft = b.steiner;
 
 #ifdef TRILIBRARY
+  printf("^^^ 1\n");
   transfernodes(&m, &b, in->pointlist, in->pointattributelist,
                 in->pointmarkerlist, in->numberofpoints,
                 in->numberofpointattributes);
+  printf("^^^ 2\n");
 #else /* not TRILIBRARY */
   readnodes(&m, &b, b.innodefilename, b.inpolyfilename, &polyfile);
 #endif /* not TRILIBRARY */
@@ -15727,10 +15730,13 @@ char **argv;
   if (!b.quiet) {
     gettimeofday(&tv1, &tz);
   }
+  printf("^^^ 3\n");
 #endif /* not NO_TIMER */
 
 #ifdef CDT_ONLY
+  printf("^^^ 4\n");
   m.hullsize = delaunay(&m, &b);                /* Triangulate the vertices. */
+  printf("^^^ 5\n");
 #else /* not CDT_ONLY */
   if (b.refine) {
     /* Read and reconstruct a mesh. */
@@ -15742,13 +15748,18 @@ char **argv;
                              in->segmentlist, in->segmentmarkerlist,
                              in->numberofsegments);
 #else /* not TRILIBRARY */
+    printf("^^^ 6\n");
     m.hullsize = reconstruct(&m, &b, b.inelefilename, b.areafilename,
                              b.inpolyfilename, polyfile);
+    printf("^^^ 7\n");
 #endif /* not TRILIBRARY */
   } else {
+  	printf("^^^ 8\n");
     m.hullsize = delaunay(&m, &b);              /* Triangulate the vertices. */
+    printf("^^^ 9\n");
   }
 #endif /* not CDT_ONLY */
+printf("^^^ 1\n");
 
 #ifndef NO_TIMER
   if (!b.quiet) {
@@ -15774,6 +15785,7 @@ char **argv;
     if (!b.refine) {
       /* Insert PSLG segments and/or convex hull segments. */
 #ifdef TRILIBRARY
+      printf("^^^ 10\n");
       formskeleton(&m, &b, in->segmentlist,
                    in->segmentmarkerlist, in->numberofsegments);
 #else /* not TRILIBRARY */
@@ -15781,6 +15793,7 @@ char **argv;
 #endif /* not TRILIBRARY */
     }
   }
+  printf("^^^ 11\n");
 
 #ifndef NO_TIMER
   if (!b.quiet) {
@@ -15795,6 +15808,7 @@ char **argv;
 
   if (b.poly && (m.triangles.items > 0)) {
 #ifdef TRILIBRARY
+  	printf("^^^ 12\n");
     holearray = in->holelist;
     m.holes = in->numberofholes;
     regionarray = in->regionlist;
@@ -15813,6 +15827,7 @@ char **argv;
     /*   an accidental free() later.                                  */
     m.holes = 0;
     m.regions = 0;
+    printf("^^^ 13\n");
   }
 
 #ifndef NO_TIMER
@@ -15827,6 +15842,7 @@ char **argv;
 
 #ifndef CDT_ONLY
   if (b.quality && (m.triangles.items > 0)) {
+  	printf("^^^ 14\n");
     enforcequality(&m, &b);           /* Enforce angle and area constraints. */
   }
 #endif /* not CDT_ONLY */
@@ -15845,9 +15861,11 @@ char **argv;
 #endif /* not NO_TIMER */
 
   /* Calculate the number of edges. */
+  printf("^^^ 15\n");
   m.edges = (3l * m.triangles.items + m.hullsize) / 2l;
 
   if (b.order > 1) {
+  	printf("^^^ 16\n");
     highorder(&m, &b);       /* Promote elements to higher polynomial order. */
   }
   if (!b.quiet) {
@@ -15856,21 +15874,25 @@ char **argv;
 
 #ifdef TRILIBRARY
   if (b.jettison) {
+  	printf("^^^ 17\n");
     out->numberofpoints = m.vertices.items - m.undeads;
   } else {
     out->numberofpoints = m.vertices.items;
   }
+  printf("^^^ 18\n");
   out->numberofpointattributes = m.nextras;
   out->numberoftriangles = m.triangles.items;
   out->numberofcorners = (b.order + 1) * (b.order + 2) / 2;
   out->numberoftriangleattributes = m.eextras;
   out->numberofedges = m.edges;
   if (b.usesegments) {
+  	printf("^^^ 19\n");
     out->numberofsegments = m.subsegs.items;
   } else {
     out->numberofsegments = m.hullsize;
   }
   if (vorout != (struct triangulateio *) NULL) {
+  	printf("^^^ 20\n");
     vorout->numberofpoints = m.triangles.items;
     vorout->numberofpointattributes = m.nextras;
     vorout->numberofedges = m.edges;
@@ -15886,6 +15908,7 @@ char **argv;
       printf("NOT writing a .node file.\n");
 #endif /* not TRILIBRARY */
     }
+    printf("^^^ 21\n");
     numbernodes(&m, &b);         /* We must remember to number the vertices. */
   } else {
     /* writenodes() numbers the vertices too. */
@@ -15906,6 +15929,7 @@ char **argv;
     }
   } else {
 #ifdef TRILIBRARY
+  	printf("^^^ 22\n");
     writeelements(&m, &b, &out->trianglelist, &out->triangleattributelist);
 #else /* not TRILIBRARY */
     writeelements(&m, &b, b.outelefilename, argc, argv);
@@ -15925,6 +15949,7 @@ char **argv;
       }
     } else {
 #ifdef TRILIBRARY
+      printf("^^^ 23\n");
       writepoly(&m, &b, &out->segmentlist, &out->segmentmarkerlist);
       out->numberofholes = m.holes;
       out->numberofregions = m.regions;
@@ -15944,18 +15969,22 @@ char **argv;
 #ifndef TRILIBRARY
 #ifndef CDT_ONLY
   if (m.regions > 0) {
+  	printf("^^^ 25\n");
     trifree((VOID *) regionarray);
   }
 #endif /* not CDT_ONLY */
   if (m.holes > 0) {
+  	printf("^^^ 26\n");
     trifree((VOID *) holearray);
   }
   if (b.geomview) {
+  	printf("^^^ 27\n");
     writeoff(&m, &b, b.offfilename, argc, argv);
   }
 #endif /* not TRILIBRARY */
   if (b.edgesout) {
 #ifdef TRILIBRARY
+  	printf("^^^ 28\n");
     writeedges(&m, &b, &out->edgelist, &out->edgemarkerlist);
 #else /* not TRILIBRARY */
     writeedges(&m, &b, b.edgefilename, argc, argv);
