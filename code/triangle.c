@@ -15717,9 +15717,9 @@ char **argv;
   m.steinerleft = b.steiner;
 
 #ifdef TRILIBRARY
-  printf("^^^ 1 number of points = %d\n", in->numberofpoints);
+  printf("^^^ 1 number of points = %d number of point attributes = %d \n", in->numberofpoints, in->numberofpointattributes);
   for (int i = 0; i < in->numberofpoints; ++i) {
-  	printf("^^^^point %d %lf, %lf\n", i, in->pointlist[2*i + 0], in->pointlist[2*i + 1]);
+  	printf("^^^^point %d %lf, %lf marker: %d\n", i, in->pointlist[2*i + 0], in->pointlist[2*i + 1], in->pointmarkerlist[i]);
   }
   transfernodes(&m, &b, in->pointlist, in->pointattributelist,
                 in->pointmarkerlist, in->numberofpoints,
