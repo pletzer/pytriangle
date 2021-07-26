@@ -29,7 +29,7 @@ setup (name = "pytriangle",
        author_email="alexander@gokliya.net",
        ext_modules = [Extension("triangulate", # name of the shared library
                                           ["code/triangle.c", 
-                                           "code/trianglemodule.cpp"],
+                                           "code/trianglemodule.c"],
                                 define_macros=[("TRILIBRARY",1),
                                                ("NO_TIMER",1)],
                                 include_dirs=["code",],

@@ -2,9 +2,7 @@
 Python interface module to double version of Triangle
 */
 
-#include <cstdlib>
-#include <string>
-#include <iostream>
+#include <stdlib.h>
 #include "Python.h"
 #define REAL double
 #define _NDIM 2
@@ -32,7 +30,7 @@ void destroy_triangulateio(PyObject *address) {
   printf("now destroying triangulateio\n");
 #endif
 
-  object = (triangulateio *) PyCapsule_GetPointer(address, TRIANGULATEIO_NAME);
+  object = (struct triangulateio *) PyCapsule_GetPointer(address, TRIANGULATEIO_NAME);
 
   if( object->pointlist             ) free( object->pointlist             );
   if( object->pointattributelist    ) free( object->pointattributelist    ); 
@@ -62,7 +60,7 @@ triangulate_NEW(PyObject *self, PyObject *args) {
   PyObject *address, *result;
   struct triangulateio *object;
 
-  object = ( triangulateio *) malloc(sizeof(struct triangulateio));
+  object = (struct triangulateio *) malloc(sizeof(struct triangulateio));
 
   object->pointlist             = NULL;
   object->pointattributelist    = NULL; /* In / out */
@@ -126,7 +124,7 @@ triangulate_SET_POINTS(PyObject *self, PyObject *args) {
     PyErr_SetString(PyExc_TypeError, MSG);
     return NULL;
   }
-  object = (triangulateio *) PyCapsule_GetPointer(address, TRIANGULATEIO_NAME);  
+  object = (struct triangulateio *) PyCapsule_GetPointer(address, TRIANGULATEIO_NAME);  
 
   npts  = PySequence_Length(xy);
   if(npts > 0) {
@@ -171,7 +169,7 @@ triangulate_SET_POINT_ATTRIBUTES(PyObject *self, PyObject *args) {
     PyErr_SetString(PyExc_TypeError, MSG);
     return NULL;
   }
-  object = (triangulateio *) PyCapsule_GetPointer(address, TRIANGULATEIO_NAME);  
+  object = (struct triangulateio *) PyCapsule_GetPointer(address, TRIANGULATEIO_NAME);  
 
   npts  = PySequence_Length(atts);
   if(npts != object->numberofpoints) {
@@ -221,7 +219,7 @@ triangulate_SET_TRIANGLE_ATTRIBUTES(PyObject *self, PyObject *args) {
     PyErr_SetString(PyExc_TypeError, MSG);
     return NULL;
   }
-  object = (triangulateio *) PyCapsule_GetPointer(address, TRIANGULATEIO_NAME);  
+  object = (struct triangulateio *) PyCapsule_GetPointer(address, TRIANGULATEIO_NAME);  
 
   ntri  = PySequence_Length(atts);
   if(ntri != object->numberoftriangles) {
@@ -266,7 +264,7 @@ triangulate_GET_POINT_ATTRIBUTES(PyObject *self, PyObject *args) {
     PyErr_SetString(PyExc_TypeError, MSG);
     return NULL;
   }    
-  object = (triangulateio *) PyCapsule_GetPointer(address, TRIANGULATEIO_NAME);
+  object = (struct triangulateio *) PyCapsule_GetPointer(address, TRIANGULATEIO_NAME);
 
   npts   = object->numberofpoints;
   result = PyList_New(npts);
@@ -299,7 +297,7 @@ triangulate_GET_TRIANGLE_ATTRIBUTES(PyObject *self, PyObject *args) {
     PyErr_SetString(PyExc_TypeError, MSG);
     return NULL;
   }    
-  object = (triangulateio *) PyCapsule_GetPointer(address, TRIANGULATEIO_NAME);
+  object = (struct triangulateio *) PyCapsule_GetPointer(address, TRIANGULATEIO_NAME);
 
   ntri = object->numberoftriangles;
   result = PyList_New(ntri);
@@ -342,7 +340,7 @@ triangulate_SET_SEGMENTS(PyObject *self, PyObject *args) {
     PyErr_SetString(PyExc_TypeError, MSG);
     return NULL;
   }
-  object = (triangulateio *) PyCapsule_GetPointer(address, TRIANGULATEIO_NAME);  
+  object = (struct triangulateio *) PyCapsule_GetPointer(address, TRIANGULATEIO_NAME);  
 
   ns = PySequence_Length(segs);
   if(ns != object->numberofsegments) {
@@ -382,7 +380,7 @@ triangulate_SET_HOLES(PyObject *self, PyObject *args) {
     PyErr_SetString(PyExc_TypeError, MSG);
     return NULL;
   }
-  object = (triangulateio *) PyCapsule_GetPointer(address, TRIANGULATEIO_NAME);
+  object = (struct triangulateio *) PyCapsule_GetPointer(address, TRIANGULATEIO_NAME);
 
   nh = PySequence_Length(xy);
   if(nh != object->numberofholes) {
@@ -419,7 +417,7 @@ triangulate_SET_REGIONS(PyObject *self, PyObject *args) {
     PyErr_SetString(PyExc_TypeError, MSG);
     return NULL;
   }
-  object = (triangulateio *) PyCapsule_GetPointer(address, TRIANGULATEIO_NAME);
+  object = (struct triangulateio *) PyCapsule_GetPointer(address, TRIANGULATEIO_NAME);
 
   nr = PySequence_Length(xy);
   if(nr != object->numberofregions) {
@@ -464,9 +462,9 @@ triangulate_TRIANGULATE(PyObject *self, PyObject *args) {
     PyErr_SetString(PyExc_TypeError, MSG);
     return NULL;
   }    
-  object_in  = (triangulateio *) PyCapsule_GetPointer(address_in,  TRIANGULATEIO_NAME);
-  object_out = (triangulateio *) PyCapsule_GetPointer(address_out, TRIANGULATEIO_NAME);
-  object_vor = (triangulateio *) PyCapsule_GetPointer(address_vor, TRIANGULATEIO_NAME);
+  object_in  = (struct triangulateio *) PyCapsule_GetPointer(address_in,  TRIANGULATEIO_NAME);
+  object_out = (struct triangulateio *) PyCapsule_GetPointer(address_out, TRIANGULATEIO_NAME);
+  object_vor = (struct triangulateio *) PyCapsule_GetPointer(address_vor, TRIANGULATEIO_NAME);
 
   triangulate(swtch, object_in, object_out, object_vor);
 
@@ -507,7 +505,7 @@ triangulate_GET_NUM_POINTS(PyObject *self, PyObject *args) {
     PyErr_SetString(PyExc_TypeError, MSG);
     return NULL;
   }
-  object = (triangulateio *) PyCapsule_GetPointer(address, TRIANGULATEIO_NAME);
+  object = (struct triangulateio *) PyCapsule_GetPointer(address, TRIANGULATEIO_NAME);
   n = object->numberofpoints;
 
   return Py_BuildValue("i", n);
@@ -528,7 +526,7 @@ triangulate_GET_NUM_TRIANGLES(PyObject *self, PyObject *args) {
     PyErr_SetString(PyExc_TypeError, MSG);
     return NULL;
   }
-  object = (triangulateio *) PyCapsule_GetPointer(address, TRIANGULATEIO_NAME);
+  object = (struct triangulateio *) PyCapsule_GetPointer(address, TRIANGULATEIO_NAME);
   n = object->numberoftriangles;
 
   return Py_BuildValue("i", n);
@@ -553,7 +551,7 @@ triangulate_GET_POINTS(PyObject *self, PyObject *args) {
     PyErr_SetString(PyExc_TypeError, MSG);
     return NULL;
   }
-  object = (triangulateio *) PyCapsule_GetPointer(address, TRIANGULATEIO_NAME);
+  object = (struct triangulateio *) PyCapsule_GetPointer(address, TRIANGULATEIO_NAME);
 
   holder = PyList_New(object->numberofpoints);
 
@@ -583,7 +581,7 @@ triangulate_GET_EDGES(PyObject *self, PyObject *args) {
     PyErr_SetString(PyExc_TypeError, MSG);
     return NULL;
   }
-  object = (triangulateio *) PyCapsule_GetPointer(address, TRIANGULATEIO_NAME);
+  object = (struct triangulateio *) PyCapsule_GetPointer(address, TRIANGULATEIO_NAME);
 
   holder = PyList_New(object->numberofedges);
 
@@ -614,7 +612,7 @@ triangulate_GET_TRIANGLES(PyObject *self, PyObject *args) {
     PyErr_SetString(PyExc_TypeError, MSG);
     return NULL;
   }
-  object = (triangulateio *) PyCapsule_GetPointer(address, TRIANGULATEIO_NAME);
+  object = (struct triangulateio *) PyCapsule_GetPointer(address, TRIANGULATEIO_NAME);
 
   holder = PyList_New(object->numberoftriangles);
   nc = object->numberofcorners;
