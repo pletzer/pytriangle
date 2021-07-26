@@ -127,7 +127,7 @@ triangulate_SET_POINTS(PyObject *self, PyObject *args) {
   }
   object = (struct triangulateio *) PyCapsule_GetPointer(address, TRIANGULATEIO_NAME);  
 
-  npts  = PySequence_Length(xy);
+  npts  = (int) PySequence_Length(xy);
   if(npts > 0) {
     if(npts != object->numberofpoints) {
       if(object->pointlist) free(object->pointlist);
@@ -172,7 +172,7 @@ triangulate_SET_POINT_ATTRIBUTES(PyObject *self, PyObject *args) {
   }
   object = (struct triangulateio *) PyCapsule_GetPointer(address, TRIANGULATEIO_NAME);  
 
-  npts  = PySequence_Length(atts);
+  npts  = (int) PySequence_Length(atts);
   if(npts != object->numberofpoints) {
     PyErr_SetString(PyExc_RuntimeError, 
       "Wrong number of attribute elements.");
@@ -182,7 +182,7 @@ triangulate_SET_POINT_ATTRIBUTES(PyObject *self, PyObject *args) {
   natts = 0;
   /* assume number of atts to be the same for all points! */
   if(npts > 0) {
-    natts = PySequence_Length( PySequence_Fast_GET_ITEM(atts, 0) );
+    natts = (int) PySequence_Length( PySequence_Fast_GET_ITEM(atts, 0) );
   }
   object->numberofpointattributes = natts;
 
@@ -222,7 +222,7 @@ triangulate_SET_TRIANGLE_ATTRIBUTES(PyObject *self, PyObject *args) {
   }
   object = (struct triangulateio *) PyCapsule_GetPointer(address, TRIANGULATEIO_NAME);  
 
-  ntri  = PySequence_Length(atts);
+  ntri  = (int) PySequence_Length(atts);
   if(ntri != object->numberoftriangles) {
     snprintf(MSG, MSG_SIZE, "ERROR in %s at line %d: wrong number of attributes (%d != %d)\n", __FILE__, __LINE__, ntri, object->numberoftriangles);
     PyErr_SetString(PyExc_RuntimeError, MSG);
@@ -232,7 +232,7 @@ triangulate_SET_TRIANGLE_ATTRIBUTES(PyObject *self, PyObject *args) {
   /* assume number of atts to be the same for all points! */
   natts = 0;
   if(ntri > 0) {
-    natts = PySequence_Length( PySequence_Fast_GET_ITEM(atts, 0) );
+    natts = (int) PySequence_Length( PySequence_Fast_GET_ITEM(atts, 0) );
   }    
   object->numberoftriangleattributes = natts;
 
@@ -343,7 +343,7 @@ triangulate_SET_SEGMENTS(PyObject *self, PyObject *args) {
   }
   object = (struct triangulateio *) PyCapsule_GetPointer(address, TRIANGULATEIO_NAME);  
 
-  ns = PySequence_Length(segs);
+  ns = (int) PySequence_Length(segs);
   if(ns != object->numberofsegments) {
     if(object->segmentlist) free(object->segmentlist);
     object->segmentlist = (int *) malloc(_NDIM * ns * sizeof(int));
@@ -383,7 +383,7 @@ triangulate_SET_HOLES(PyObject *self, PyObject *args) {
   }
   object = (struct triangulateio *) PyCapsule_GetPointer(address, TRIANGULATEIO_NAME);
 
-  nh = PySequence_Length(xy);
+  nh = (int) PySequence_Length(xy);
   if(nh != object->numberofholes) {
     if(object->holelist) free(object->holelist);
     object->holelist = (REAL *) malloc(nh * _NDIM * sizeof(REAL));
@@ -420,7 +420,7 @@ triangulate_SET_REGIONS(PyObject *self, PyObject *args) {
   }
   object = (struct triangulateio *) PyCapsule_GetPointer(address, TRIANGULATEIO_NAME);
 
-  nr = PySequence_Length(xy);
+  nr = (int) PySequence_Length(xy);
   if(nr != object->numberofregions) {
     if(object->regionlist) free(object->regionlist);
     object->regionlist = (REAL *) malloc(nr * 4 * sizeof(REAL));
