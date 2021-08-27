@@ -957,13 +957,9 @@ int minus1mod3[3] = {2, 0, 1};
 /*   direction is necessarily reversed, because the handle specified by an   */
 /*   oriented triangle is directed counterclockwise around the triangle.     */
 
-// #define sym(otri1, otri2)                                                     \
-//   ptr = (otri1).tri[(otri1).orient];                                          \
-//   decode(ptr, otri2);
-void sym(otri otri1, otri otri2) {
-    triangle *ptr = (otri1).tri[(otri1).orient]; 
-    decode(ptr, otri2);
-}
+#define sym(otri1, otri2)                                                     \
+  ptr = (otri1).tri[(otri1).orient];                                          \
+  decode(ptr, otri2);
 
 #define symself(otri)                                                         \
   ptr = (otri).tri[(otri).orient];                                            \
