@@ -5,22 +5,25 @@ Python interface module to double version of Triangle
 #include <stdlib.h>
 #include "Python.h"
 #define REAL double
-#define _NDIM 2
+#define ANSI_DECLARATORS
+#define VOID void
+
 #include "triangle.h"
 
-static char MSG[1024];
+#define _NDIM 2
+static char MSG[2048];
 #define TRIANGULATEIO_NAME "triangulateio"
 
-#if defined(Py_DEBUG) || defined(DEBUG)
-extern void _Py_CountReferences(FILE*);
-#define CURIOUS(x) { fprintf(stderr, __FILE__ ":%d ", __LINE__); x; }
-#else
-#define CURIOUS(x)
-#endif
-#define MARKER()        CURIOUS(fprintf(stderr, "\n"))
-#define DESCRIBE(x)     CURIOUS(fprintf(stderr, "  " #x "=%d\n", x))
-#define DESCRIBE_HEX(x) CURIOUS(fprintf(stderr, "  " #x "=%08x\n", x))
-#define COUNTREFS()     CURIOUS(_Py_CountReferences(stderr))
+// #if defined(Py_DEBUG) || defined(DEBUG)
+// extern void _Py_CountReferences(FILE*);
+// #define CURIOUS(x) { fprintf(stderr, __FILE__ ":%d ", __LINE__); x; }
+// #else
+// #define CURIOUS(x)
+// #endif
+// #define MARKER()        CURIOUS(fprintf(stderr, "\n"))
+// #define DESCRIBE(x)     CURIOUS(fprintf(stderr, "  " #x "=%d\n", x))
+// #define DESCRIBE_HEX(x) CURIOUS(fprintf(stderr, "  " #x "=%08x\n", x))
+// #define COUNTREFS()     CURIOUS(_Py_CountReferences(stderr))
 
 void destroy_triangulateio(PyObject *address) {
 

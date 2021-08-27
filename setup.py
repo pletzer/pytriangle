@@ -21,7 +21,7 @@ if not hasattr(sys, 'version_info') or sys.version_info < (2,6,0,'',0):
 from distutils.core import setup, Extension
 
 setup (name = "pytriangle",
-       version = "2.2",
+       version = "2.3",
        description='A 2D triangulation program originally written by Jonathan Richard Shewchuck',
        url="http://github.com/pletzer/pytriangle",
        py_modules = ["triangle",],
@@ -31,7 +31,7 @@ setup (name = "pytriangle",
                                           ["code/triangle.c", 
                                            "code/trianglemodule.c"],
                                 define_macros=[("TRILIBRARY",1),
-                                               ("NO_TIMER",1)],
+                                               ("NO_TIMER",1),],
                                 include_dirs=["code",],
                                 ),
                       
