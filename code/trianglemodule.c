@@ -6,6 +6,11 @@ Python interface module to double version of Triangle
 #include "Python.h"
 #define REAL double
 #define _NDIM 2
+
+#ifndef __WIN32
+#define __int64 unsigned long
+#endif
+
 #include "triangle.h"
 
 static char MSG[1024];

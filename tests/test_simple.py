@@ -8,7 +8,7 @@ def test_simple():
     t.set_points(pts)
     seg = [(0,1), (1,2), (2,0)]
     t.set_segments(seg)
-    t.triangulate(area=0.5, mode='pzq27eQ')
+    t.triangulate(area=5, mode='pzq10eQ')
     print('number of points/triangles: %d/%d' % 
         (t.get_num_points(), t.get_num_triangles()))
 
