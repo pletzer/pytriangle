@@ -37,3 +37,26 @@ linux_task:
     - python setup.py install
     - pytest
 
+
+#
+# Testing (Windows)
+#
+windows_task:
+  auto_cancellation: true
+  matrix:
+    env:
+      PY_VER: "3.9"
+  name: "Windows: py${PY_VER}"
+  windows_container:
+    image: cirrusci/windowsservercore:2019
+  env:
+    PATH: %HOME%\miniconda3\bin\;%PATH%
+  env:
+    CIRRUS_SHELL: powershell
+  test_script:
+    - wget https://repo.anaconda.com/miniconda/Miniconda3-latest-Windows-x86_64.exe -O miniconda.exe
+    - miniconda.exe -b
+    - conda install pytest numpy matplotlib
+    - conda list
+    - python setup.py install
+    - pytest
