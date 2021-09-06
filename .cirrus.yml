@@ -15,12 +15,6 @@ container:
 env:
   # Maximum cache period (in weeks) before forcing a new cache upload.
   CACHE_PERIOD: "2"
-  # Increment the build number to force new mambaforge cache upload.
-  MAMBA_CACHE_BUILD: "0"
-  # Increment the build number to force new mint cache upload.
-  MINT_CACHE_BUILD: "0"
-  # Base environment conda packages to be installed
-  MAMBA_CACHE_PACKAGES: "pip conda-lock"
 
 #
 # Testing (Linux)
@@ -29,15 +23,11 @@ linux_task:
   auto_cancellation: true
   matrix:
     env:
-      PY_VER: "3.7"
-    env:
-      PY_VER: "3.8"
-    env:
       PY_VER: "3.9"
   name: "Linux: py${PY_VER}"
   container:
     image: gcc:latest
-  check_task:
-    - pip install --no-deps --editable .
+  test_script:
+    - python setup.py install
     - pytest
 
