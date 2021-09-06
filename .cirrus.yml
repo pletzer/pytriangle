@@ -50,9 +50,7 @@ windows_task:
   windows_container:
     image: cirrusci/windowsservercore:2019
   env:
-    PATH: %HOME%\miniconda3\bin\;%PATH%
-  env:
-    CIRRUS_SHELL: powershell
+    PATH: %HOME%\miniconda3\Library\bin;%HOME%\miniconda3\Library\usr\bin;%PATH%
   test_script:
     - wget https://repo.anaconda.com/miniconda/Miniconda3-latest-Windows-x86_64.exe -O miniconda.exe
     - miniconda.exe -b
