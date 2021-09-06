@@ -54,6 +54,6 @@ windows_task:
   test_script:
     - wget https://repo.anaconda.com/miniconda/Miniconda3-latest-Windows-x86_64.exe -O miniconda.exe
     - Get-ChildItem -Path .
-    - .\miniconda.exe -b
+    - .\miniconda.exe -b /D=.
     - Get-ChildItem -Path .
-    - conda install pytest numpy matplotlib
+    - Get-ChildItem -Path C:\ -Recurse -Filter 'conda.*'
