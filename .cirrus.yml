@@ -27,11 +27,13 @@ linux_task:
   name: "Linux: py${PY_VER}"
   container:
     image: gcc:latest
+  env:
+    PATH: $HOME/miniconda3/bin/:$PATH
   test_script:
     - wget https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh -O miniconda.sh
     - bash miniconda.sh -b
-    - $HOME/miniconda3/bin/conda install pytest
-    - $HOME/miniconda3/bin/conda list
-    - $HOME/miniconda3/bin/python setup.py install
-    - $HOME/miniconda3/bin/pytest
+    - conda install pytest numpy
+    - conda list
+    - python setup.py install
+    - pytest
 
