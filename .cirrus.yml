@@ -52,3 +52,7 @@ windows_task:
   test_script:
     - wget https://repo.anaconda.com/miniconda/Miniconda3-latest-Windows-x86_64.exe -O miniconda.exe
     - miniconda.exe -b
+    - Get-Location
+    - Get-ChildItem -Path miniconda3
+    - Get-ChildItem -Path miniconda3\Library
+    - Get-ChildItem -Path miniconda3\Library\bin
