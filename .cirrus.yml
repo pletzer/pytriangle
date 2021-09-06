@@ -32,7 +32,7 @@ linux_task:
   test_script:
     - wget https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh -O miniconda.sh
     - bash miniconda.sh -b
-    - conda install pytest numpy matplotlib
+    - conda install --yes pytest numpy matplotlib
     - conda list
     - python setup.py install
     - pytest
@@ -41,28 +41,41 @@ linux_task:
 #
 # Testing (Windows)
 #
-windows_task:
+win_task:
   auto_cancellation: true
-  matrix:
-    env:
+
+  env:
+    matrix:
       PY_VER: "3.9"
-  name: "Windows: py${PY_VER}"
+
+  name: windows ${PY_VER}
   windows_container:
-    image: cirrusci/windowsservercore:2019
+    image: cirrusci/windowsservercore:cmake
+    os_version: 2019
   env:
-    CIRRUS_SHELL: powershell
-  env:
-    PATH: C:\Users\ContainerAdministrator\miniconda3\Library\bin;$PATH
-  test_script:
-    - wget https://repo.anaconda.com/miniconda/Miniconda3-latest-Windows-x86_64.exe -O C:\Users\ContainerAdministrator\miniconda.exe
-    - ls C:\Users\ContainerAdministrator
-    - echo "=== installing miniconda === "
-    - ps: C:\Users\ContainerAdministrator\miniconda.exe /S /D=C:\Users\ContainerAdministrator\miniconda3 /RegisterPython=1 /InstallationType=JustMe /AddToPath=1
-    - echo "=== done ==="
-    - ls C:\Users\ContainerAdministrator
-    - echo "... installing conda packages ..."
-    - ps: C:\Users\ContainerAdministrator\miniconda3\Library\bin\conda install pytest numpy matplotlib
-    - echo "... done ..."
-    - ps: C:\Users\ContainerAdministrator\miniconda3\Library\bin\conda list
-    - ps: C:\Users\ContainerAdministrator\miniconda3\Library\bin\python setup.py install
-    - ps: C:\Users\ContainerAdministrator\miniconda3\Library\bin\pytest
+    ANACONDA_LOCATION: $USERPROFILE\anaconda
+    PATH: $ANACONDA_LOCATION\Scripts;$ANACONDA_LOCATION;$PATH
+    # must set this to its default since it doesn't work in env variables
+    # see https://github.com/cirruslabs/cirrus-ci-docs/issues/423
+    CIRRUS_WORKING_DIR: C:\Users\ContainerAdministrator\AppData\Local\Temp\cirrus-ci-build
+    PYTHON_ARCH: 64
+
+  system_script:
+    # install OpenSSL
+    - choco install -y openssl.light
+
+  conda_script:
+    - choco install -y miniconda3 --params="'/D:%ANACONDA_LOCATION%'"
+    # https://github.com/napari/napari/pull/594#issuecomment-542475164
+    - conda install --yes setuptools pytest numpy matplotlib
+    - conda install --yes python=%PY_VER%
+
+  install_script:
+    - pip install -e .
+
+  check_script:
+    - conda list
+    - python -c "import triangle; print(triangle.__version__)"
+
+  test_script: pytest -v
+

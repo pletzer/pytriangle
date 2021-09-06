@@ -1,12 +1,10 @@
-Please consult carefully the license conditions described under code/README
+Please consult carefully the license conditions described under src/README
 for use of the TRIANGLE code. The license below describes the conditions of
-use of all the code not contained under code/.
+use of all the code not contained under src/.
 
 The MIT License (MIT)
 
 Copyright (c) 2015 Alexander Pletzer
-
-
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal

@@ -13,15 +13,29 @@ python setup.py sdist upload -r pypi
 """
 
 import sys
+import re
+
+PACKAGE = "triangle"
 
 if not hasattr(sys, 'version_info') or sys.version_info < (2,6,0,'',0):
     raise SystemExit("Python 2.7 or later required to build triangle!")
 
+# extract the version from file version.txt
+with open("version.txt") as f:
+     VERSION = f.read().strip()
 
-from distutils.core import setup, Extension
+# generate <package>/__init__.py from <package>/__init__.py.in
+init_file = ""
+with open(f"{PACKAGE}/__init__.py.in") as fi:
+    init_file = re.sub(r"@VERSION@", VERSION, fi.read())
+    with open(f"{PACKAGE}/__init__.py", "w") as fo:
+        fo.write(init_file)
+
+
+from setuptools import setup, Extension
 
 setup (name = "pytriangle",
-       version = "2.3",
+       version = "2.4",
        description='A 2D triangulation program originally written by Jonathan Richard Shewchuck',
        url="http://github.com/pletzer/pytriangle",
        py_modules = ["triangle",],
