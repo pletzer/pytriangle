@@ -52,14 +52,14 @@ windows_task:
   env:
     CIRRUS_SHELL: powershell
   env:
-    PATH: $HOME\miniconda3\Library\bin;$PATH
+    PATH: C:\Users\ContainerAdministrator\miniconda3\Library\bin;$PATH
   test_script:
     - wget https://repo.anaconda.com/miniconda/Miniconda3-latest-Windows-x86_64.exe -O miniconda.exe
-    - Get-ChildItem -Path $HOME
-    - .\miniconda.exe /S /D=$HOME\miniconda3 /RegisterPython=1 /InstallationType=JustMe /AddToPath=1 
-    - Get-ChildItem -Path $HOME
-    - Get-ChildItem -Path $HOME\miniconda3\Library\bin
-    - conda install pytest numpy matplotlib
-    - conda list
-    - python setup.py install
-    - pytest
+    - ls C:\Users\ContainerAdministrator
+    - echo "=== installing miniconda === "
+    - .\miniconda.exe /S /D=C:\Users\ContainerAdministrator\miniconda3 /RegisterPython=1 /InstallationType=JustMe /AddToPath=1 
+    - ls C:\Users\ContainerAdministrator
+    - C:\Users\ContainerAdministrator\miniconda3\Library\bin\conda install pytest numpy matplotlib
+    - C:\Users\ContainerAdministrator\miniconda3\Library\bin\conda list
+    - C:\Users\ContainerAdministrator\miniconda3\Library\bin\python setup.py install
+    - C:\Users\ContainerAdministrator\miniconda3\Library\bin\pytest
