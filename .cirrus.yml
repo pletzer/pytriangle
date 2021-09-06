@@ -30,8 +30,8 @@ linux_task:
   test_script:
     - wget https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh -O miniconda.sh
     - bash miniconda.sh -b
-    - echo $(ls -ltr)
-    - echo $(ls -ltr "$HOME")
+    - conda install pytest
+    - conda list
     - $HOME/miniconda3/bin/python setup.py install
     - pytest
 
