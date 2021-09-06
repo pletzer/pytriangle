@@ -35,7 +35,9 @@ linux_task:
     - conda install --yes pytest numpy matplotlib
     - conda list
     - python setup.py install
-    - pytest
+    - python tests/test_simple.py
+    - python tests/test_triangle.py
+    - python tests/test_regions.py
 
 
 #

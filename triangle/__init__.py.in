@@ -1,1 +1,3 @@
 __version__ = "@VERSION@"
+
+from .triangle import Triangle
