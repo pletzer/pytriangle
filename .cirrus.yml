@@ -54,7 +54,7 @@ win_task:
     os_version: 2019
   env:
     ANACONDA_LOCATION: $USERPROFILE\anaconda
-    PATH: $ANACONDA_LOCATION\Scripts;$ANACONDA_LOCATION;$PATH
+    PATH: $ANACONDA_LOCATION\Scripts;$ANACONDA_LOCATION\Library\bin;$PATH
     # must set this to its default since it doesn't work in env variables
     # see https://github.com/cirruslabs/cirrus-ci-docs/issues/423
     CIRRUS_WORKING_DIR: C:\Users\ContainerAdministrator\AppData\Local\Temp\cirrus-ci-build
