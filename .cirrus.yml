@@ -1,0 +1,39 @@
+# Reference:
+#   - https://cirrus-ci.org/guide/writing-tasks/
+#   - https://cirrus-ci.org/guide/linux/
+#   - https://cirrus-ci.org/guide/macOS/
+#   - https://cirrus-ci.org/guide/windows/
+#   - https://hub.docker.com/_/gcc/
+#   - https://hub.docker.com/_/python/
+
+#
+# Global defaults.
+#
+container:
+  image: python:3.9
+
+env:
+  # Maximum cache period (in weeks) before forcing a new cache upload.
+  CACHE_PERIOD: "2"
+  # Increment the build number to force new mambaforge cache upload.
+  MAMBA_CACHE_BUILD: "0"
+  # Increment the build number to force new mint cache upload.
+  MINT_CACHE_BUILD: "0"
+  # Base environment conda packages to be installed
+  MAMBA_CACHE_PACKAGES: "pip conda-lock"
+
+#
+# Testing (Linux)
+#
+linux_task:
+  auto_cancellation: true
+  matrix:
+    env:
+      PY_VER: "3.9"
+  name: "Linux: py${PY_VER}"
+  container:
+    image: gcc:latest
+  check_task:
+    - pip install --no-deps --editable .
+    - pytest
+
