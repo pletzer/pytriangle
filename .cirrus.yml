@@ -21,27 +21,40 @@ env:
 #
 linux_task:
   auto_cancellation: true
+
   matrix:
     env:
       PY_VER: "3.9"
+
   name: "Linux: py${PY_VER}"
+
   container:
     image: gcc:latest
+
   env:
     PATH: $HOME/miniconda3/bin/:$PATH
-  test_script:
-    - wget https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh -O miniconda.sh
-    - bash miniconda.sh -b
+
+  conda_script:
+    - wget https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh -O ~/miniconda.sh
+    - bash ~/miniconda.sh -b -p $HOME/miniconda3
     - conda install --yes pytest numpy matplotlib
     - conda list
-    - python setup.py install
+
+  install_script:
+    - pip install -e .
+
+  check_script:
+    - conda list
+    - python -c "import triangle; print(triangle.__version__)"
+
+  test_script:
     - python tests/test_simple.py
     - python tests/test_triangle.py
     - python tests/test_regions.py
 
 
 #
-# Testing (Windows)
+# Windows
 #
 win_task:
   auto_cancellation: true
@@ -51,12 +64,13 @@ win_task:
       PY_VER: "3.9"
 
   name: windows ${PY_VER}
+
   windows_container:
     image: cirrusci/windowsservercore:cmake
     os_version: 2019
   env:
     ANACONDA_LOCATION: $USERPROFILE\anaconda
-    PATH: $ANACONDA_LOCATION\Scripts;$ANACONDA_LOCATION\Library\bin;$PATH
+    PATH: $ANACONDA_LOCATION;$ANACONDA_LOCATION\Scripts;$ANACONDA_LOCATION\Library\bin;$PATH
     # must set this to its default since it doesn't work in env variables
     # see https://github.com/cirruslabs/cirrus-ci-docs/issues/423
     CIRRUS_WORKING_DIR: C:\Users\ContainerAdministrator\AppData\Local\Temp\cirrus-ci-build
@@ -75,9 +89,7 @@ win_task:
   install_script:
     - pip install -e .
 
-  check_script:
-    - conda list
-    - python -c "import triangle; print(triangle.__version__)"
 
-  test_script: pytest -v
+  test_script: 
+    - pytest -v
 
