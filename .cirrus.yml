@@ -64,7 +64,7 @@ osx_task:
 
   name: "OSX: py${PY_VER}"
 
-  container:
+  macos_instance:
     image: big-sur-xcode
 
   env:
