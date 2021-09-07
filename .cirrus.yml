@@ -17,7 +17,7 @@ env:
   CACHE_PERIOD: "2"
 
 #
-# Testing (Linux)
+# Linux
 #
 linux_task:
   auto_cancellation: true
@@ -37,7 +37,7 @@ linux_task:
   conda_script:
     - wget https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh -O ~/miniconda.sh
     - bash ~/miniconda.sh -b -p $HOME/miniconda3
-    - conda install --yes pytest numpy matplotlib
+    - conda install --yes --file requirements.txt python=$PY_VER
     - conda list
 
   install_script:
@@ -83,13 +83,14 @@ win_task:
   conda_script:
     - choco install -y miniconda3 --params="'/D:%ANACONDA_LOCATION%'"
     # https://github.com/napari/napari/pull/594#issuecomment-542475164
-    - conda install --yes setuptools pytest numpy matplotlib
-    - conda install --yes python=%PY_VER%
+    - conda install --yes --file requirements.txt python=%PY_VER%
 
   install_script:
     - pip install -e .
 
-
   test_script: 
-    - pytest -v
+    - python tests/test_simple.py
+    - python tests/test_triangle.py
+    - python tests/test_regions.py
+
 
