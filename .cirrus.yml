@@ -35,7 +35,43 @@ linux_task:
     PATH: $HOME/miniconda3/bin/:$PATH
 
   conda_script:
-    - wget https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh -O ~/miniconda.sh
+    - wget  --quiet https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh -O ~/miniconda.sh
+    - bash ~/miniconda.sh -b -p $HOME/miniconda3
+    - conda install --yes --file requirements.txt python=$PY_VER
+    - conda list
+
+  install_script:
+    - pip install -e .
+
+  check_script:
+    - conda list
+    - python -c "import triangle; print(triangle.__version__)"
+
+  test_script:
+    - python tests/test_simple.py
+    - python tests/test_triangle.py
+    - python tests/test_regions.py
+
+#
+# OSX
+#
+osx_task:
+  auto_cancellation: true
+
+  matrix:
+    env:
+      PY_VER: "3.9"
+
+  name: "OSX: py${PY_VER}"
+
+  container:
+    image: big-sur-xcode
+
+  env:
+    PATH: $HOME/miniconda3/bin/:$PATH
+
+  conda_script:
+    - wget  --quiet https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh -O ~/miniconda.sh
     - bash ~/miniconda.sh -b -p $HOME/miniconda3
     - conda install --yes --file requirements.txt python=$PY_VER
     - conda list
