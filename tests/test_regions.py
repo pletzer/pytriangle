@@ -1,6 +1,7 @@
 import math
 import triangle
 import numpy
+import sys
 
 pointBoundary =  [ (-1, -1),
                    (-1, 1.0), 
@@ -29,15 +30,14 @@ t.set_segments(segs, segTags)
 regions = [ (-0.5, 0.5, 10, 0.1),
             (0.5, 0.5, 20, 0.5)]
 
-
 t.set_regions(regions)
-
 
 t.triangulate(mode='qpzAe', area=1)
 
-# a function to plot the triangulation, for fast check of regional attributes
-#  within the mesh triangles
-t.plot_mesh().show()
+if len(sys.argv) > 1 and sys.argv[1] == 'plot':
+    # a function to plot the triangulation, for fast check of regional attributes
+    #  within the mesh triangles
+    t.plot_mesh().show()
 
 print(t.get_triangles())
 

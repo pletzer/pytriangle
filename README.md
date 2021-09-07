@@ -3,6 +3,22 @@
 A python interface to the 2D triangulation program TRIANGLE written by 
 Jonathan Richard Shewchuck [https://www.cs.cmu.edu/~quake/triangle.html]
 
+<p align="left">
+<a href="https://cirrus-ci.com/github/pletzer/pytriangle">
+<img src="https://api.cirrus-ci.com/github/pletzer/pytriangle.svg?branch=master"
+     alt="Cirrus-CI" /></a>
+ <a href="https://github.com/pletzer/pytriangle/graphs/contributors">
+  8 <img src="https://img.shields.io/github/contributors/pletzer/pytriangle.svg"
+  9      alt="# contributors" /></a>
+ 10 <a href="https://github.com/pletzer/pytriangle/releases">
+ 11 <img src="https://img.shields.io/github/v/release/pletzer/pytriangle"
+ 12      alt="latest release" /></a>
+ 13 <a href="https://github.com/pletzer/pytriangle/commits/master">
+ 14 <img src="https://img.shields.io/github/commits-since/pletzer/pytriangle/latest.svg"
+ 15      alt="Commits since last release" /></a>
+ 16 </p>
+
+
 ### Usage ###
 
 Import the triangle module
@@ -84,13 +100,7 @@ Alternatively, you can also install pytriangle with pip
 pip install pytriangle
 ```
 
-## Contributors ##
-
-Alexander Pletzer, Luigi Alberti
-
 ### Support ###
 
 Send bug reports and comments to alexander _at_ gokliya _dot_ net
-
-```
 

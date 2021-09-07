@@ -1,0 +1,132 @@
+# Reference:
+#   - https://cirrus-ci.org/guide/writing-tasks/
+#   - https://cirrus-ci.org/guide/linux/
+#   - https://cirrus-ci.org/guide/macOS/
+#   - https://cirrus-ci.org/guide/windows/
+#   - https://hub.docker.com/_/gcc/
+#   - https://hub.docker.com/_/python/
+
+#
+# Global defaults.
+#
+container:
+  image: python:3.9
+
+env:
+  # Maximum cache period (in weeks) before forcing a new cache upload.
+  CACHE_PERIOD: "2"
+
+#
+# Linux
+#
+linux_task:
+  auto_cancellation: true
+
+  matrix:
+    env:
+      PY_VER: "3.9"
+
+  name: "Linux: py${PY_VER}"
+
+  container:
+    image: gcc:latest
+
+  env:
+    PATH: $HOME/miniconda3/bin/:$PATH
+
+  conda_script:
+    - wget  --quiet https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh -O ~/miniconda.sh
+    - bash ~/miniconda.sh -b -p $HOME/miniconda3
+    - conda install --yes --file requirements.txt python=$PY_VER
+    - conda list
+
+  install_script:
+    - pip install -e .
+
+  check_script:
+    - conda list
+    - python -c "import triangle; print(triangle.__version__)"
+
+  test_script:
+    - python tests/test_simple.py
+    - python tests/test_triangle.py
+    - python tests/test_regions.py
+
+#
+# OSX
+#
+osx_task:
+  auto_cancellation: true
+
+  matrix:
+    env:
+      PY_VER: "3.9"
+
+  name: "OSX: py${PY_VER}"
+
+  macos_instance:
+    image: big-sur-xcode
+
+  env:
+    PATH: $HOME/miniconda3/bin/:$PATH
+
+  conda_script:
+    - wget  --quiet https://repo.anaconda.com/miniconda/Miniconda3-latest-MacOSX-x86_64.sh -O ~/miniconda.sh
+    - bash ~/miniconda.sh -b -p $HOME/miniconda3
+    - conda install --yes --file requirements.txt python=$PY_VER
+    - conda list
+
+  install_script:
+    - pip install -e .
+
+  check_script:
+    - conda list
+    - python -c "import triangle; print(triangle.__version__)"
+
+  test_script:
+    - python tests/test_simple.py
+    - python tests/test_triangle.py
+    - python tests/test_regions.py
+
+
+#
+# Windows
+#
+win_task:
+  auto_cancellation: true
+
+  env:
+    matrix:
+      PY_VER: "3.9"
+
+  name: windows ${PY_VER}
+
+  windows_container:
+    image: cirrusci/windowsservercore:cmake
+    os_version: 2019
+  env:
+    ANACONDA_LOCATION: $USERPROFILE\anaconda
+    PATH: $ANACONDA_LOCATION;$ANACONDA_LOCATION\Scripts;$ANACONDA_LOCATION\Library\bin;$PATH
+    # must set this to its default since it doesn't work in env variables
+    # see https://github.com/cirruslabs/cirrus-ci-docs/issues/423
+    CIRRUS_WORKING_DIR: C:\Users\ContainerAdministrator\AppData\Local\Temp\cirrus-ci-build
+    PYTHON_ARCH: 64
+
+  system_script:
+    # install OpenSSL
+    - choco install -y openssl.light
+
+  conda_script:
+    - choco install -y miniconda3 --params="'/D:%ANACONDA_LOCATION%'"
+    # https://github.com/napari/napari/pull/594#issuecomment-542475164
+    - conda install --yes --file requirements.txt python=%PY_VER%
+
+  install_script:
+    - pip install -e .
+
+  test_script: 
+    - python tests/test_simple.py
+    - python tests/test_triangle.py
+    - python tests/test_regions.py
+
+

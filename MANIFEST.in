@@ -1,2 +1,2 @@
-graft code
+include version.txt triangle/__init__.py.in src/*.h
 
