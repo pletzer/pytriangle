@@ -7,16 +7,13 @@ Jonathan Richard Shewchuck [https://www.cs.cmu.edu/~quake/triangle.html]
 <a href="https://cirrus-ci.com/github/pletzer/pytriangle">
 <img src="https://api.cirrus-ci.com/github/pletzer/pytriangle.svg?branch=master"
      alt="Cirrus-CI" /></a>
- <a href="https://github.com/pletzer/pytriangle/graphs/contributors">
-  8 <img src="https://img.shields.io/github/contributors/pletzer/pytriangle.svg"
-  9      alt="# contributors" /></a>
- 10 <a href="https://github.com/pletzer/pytriangle/releases">
- 11 <img src="https://img.shields.io/github/v/release/pletzer/pytriangle"
- 12      alt="latest release" /></a>
- 13 <a href="https://github.com/pletzer/pytriangle/commits/master">
- 14 <img src="https://img.shields.io/github/commits-since/pletzer/pytriangle/latest.svg"
- 15      alt="Commits since last release" /></a>
- 16 </p>
+<a href="https://github.com/pletzer/pytriangle/graphs/contributors">
+<img src="https://img.shields.io/github/contributors/pletzer/pytriangle.svg"
+     alt="# contributors" /></a>
+<a href="https://github.com/pletzer/pytriangle/commits/master">
+<img src="https://img.shields.io/github/commits-since/pletzer/pytriangle/latest.svg"
+     alt="Commits since last release" /></a>
+</p>
 
 
 ### Usage ###
