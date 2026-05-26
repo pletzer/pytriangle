@@ -32,7 +32,7 @@ with open(f"{PACKAGE}/__init__.py.in") as fi:
         fo.write(init_file)
 
 
-from setuptools import setup, Extension
+from setuptools import setup, Extension, find_packages
 
 setup (name = "pytriangle",
        version = "2.4",
