@@ -3,17 +3,8 @@
 A python interface to the 2D triangulation program TRIANGLE written by 
 Jonathan Richard Shewchuck [https://www.cs.cmu.edu/~quake/triangle.html]
 
-<p align="left">
-<a href="https://cirrus-ci.com/github/pletzer/pytriangle">
-<img src="https://api.cirrus-ci.com/github/pletzer/pytriangle.svg?branch=master"
-     alt="Cirrus-CI" /></a>
-<a href="https://github.com/pletzer/pytriangle/graphs/contributors">
-<img src="https://img.shields.io/github/contributors/pletzer/pytriangle.svg"
-     alt="# contributors" /></a>
-<a href="https://github.com/pletzer/pytriangle/commits/master">
-<img src="https://img.shields.io/github/commits-since/pletzer/pytriangle/latest.svg"
-     alt="Commits since last release" /></a>
-</p>
+
+[![Build and Test](https://github.com/pletzer/pytriangle/actions/workflows/test.yml/badge.svg)](https://github.com/pletzer/pytriangle/actions/workflows/test.yml)
 
 
 ### Usage ###
