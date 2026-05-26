@@ -28,10 +28,14 @@ jobs:
         run: |
           python -m pip install --upgrade pip
 
-      - name: Install package and dependencies
+      - name: Install dependencies
         run: |
           pip install .
-          pip install pytest pytriangle
+          pip install pytest numpy
+
+      - name: Install package
+        run: |
+          pip install .
 
       - name: Run tests
         run: |
