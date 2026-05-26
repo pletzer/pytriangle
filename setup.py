@@ -36,6 +36,7 @@ from setuptools import setup, Extension
 
 setup (name = "pytriangle",
        version = "2.4",
+       packages=find_packages(include=["triangle", "triangle.*"]),
        description='A 2D triangulation program originally written by Jonathan Richard Shewchuck',
        url="http://github.com/pletzer/pytriangle",
        py_modules = ["triangle",],
