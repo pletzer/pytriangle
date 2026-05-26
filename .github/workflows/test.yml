@@ -37,6 +37,17 @@ jobs:
         run: |
           pip install .
 
+      - name: Debug installation
+        run: |
+            python -c "import sys; print(sys.path)"
+            python -c "import site; print(site.getsitepackages())"
+            pip show pytriangle
+            pip list  
+            
+      - name: Debug imports
+        run: |
+            python -c "import triangle; print(triangle)"
+
       - name: Run tests
         run: |
           pytest -v
